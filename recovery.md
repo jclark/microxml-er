@@ -1,6 +1,6 @@
 # Error recovery for MicroXML
 
-This specification defines a way to parse any sequence of characters into a generalization of MicroXML data model. The generalization is that there are no restrictions on the characters that can occur in names or in data.
+This specification defines a way to parse any sequence of characters into a generalization of the MicroXML data model. The generalization is that there are no restrictions on the characters that can occur in names or in data.
 
 Parsing is divided in two consecutive phases: tokenization and tree building. Information is passed from the tokenization phase to the tree building phase as a sequence of  _abstract tokens_. Abstract tokens are named in CamelCase and each token may have associated data.  The following abstract tokens are defined:
 
