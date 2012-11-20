@@ -47,6 +47,8 @@ The tokenization phase works by dividing up the input into _lexical tokens_. Eac
     S ::= #x9 | #xA | #xC | #x20
     SINGLE_QUOTE ::= "'"
     DOUBLE_QUOTE ::= '"'
+    CDATA_OPEN ::= "<![CDATA["
+    CDATA_CLOSE ::= "]]>"
 
 The associated data for lexical tokens is as follows:
 
@@ -95,6 +97,7 @@ This section defines the available tokenization modes.  The only tokens that are
 + SIMPLE_EMPTY_ELEMENT_TAG - emit a StartTagOpen token followed by a EmptyElementTagClose token
 + START_TAG_ATTRIBUTE - emit a StartTagOpen token followed by an AttributeName token and change to StartAttributeValue mode
 + END_TAG - emit an EndTag token
++ CDATA_OPEN - change to CData mode
 
 #### Comment
 
@@ -129,6 +132,11 @@ This section defines the available tokenization modes.  The only tokens that are
 
 + DATA_CHAR, NAMED_CHAR_REF, NUMERIC_CHAR_REF - default handling
 + DOUBLE_QUOTE - change to Tag mode
+
+#### CData
+
++ DATA_CHAR - default handling
++ CDATA_CLOSE - change to Main mode
 
 ### TODO
 
