@@ -47,7 +47,6 @@ The tokenization phase works by dividing up the input into _lexical tokens_. Eac
     S ::= #x9 | #xA | #xC | #x20
     SINGLE_QUOTE ::= "'"
     DOUBLE_QUOTE ::= '"'
-    BOM ::= #xFEFF
 
 The associated data for lexical tokens is as follows:
 
@@ -67,12 +66,12 @@ The state of the tokenization process consists of
 + the current input (a sequence of code-points)
 
 A step in the tokenization process consists of the following.
-+ Recognizing the next lexical token. This consists of finding the longest initial subsequence of the input that matches one of the lexical tokens recognized in the current tokenization mode. It is possible for there to be two choices for the longest matching token (eg BOM and DATA_CHAR in Init mode): in this case, the choice that is not DATA_CHAR must be recognized.
++ Recognizing the next lexical token. This consists of finding the longest initial subsequence of the input that matches one of the lexical tokens recognized in the current tokenization mode. It is possible for there to be two choices for the longest matching token (eg S and DATA_CHAR in UnquoteAttributeValue mode): in this case, the choice that is not DATA_CHAR must be recognized.
 + Emitting zero or more abstract tokens according to the rules for that lexical token in that tokenization mode.
 + Possibly changing to another tokenization mode according to the rules for that lexical token in that tokenization mode.
 + Changing the current input to be the sequence of characters following the token.
 
-The tokenization process starts with Init as the current tokenization mode, and the input to the tokenization process as the current input, and repeats the tokenization step until the current input is empty. At this point, if the current tokenization mode is one of Tag, StartAttributeValue, SingleQuoteAttributeValue or DoubleQuoteAttributeValue, then a StartTagClose abstract token is emitted.
+The tokenization process starts with Main as the current tokenization mode, and the input to the tokenization process as the current input, and repeats the tokenization step until the current input is empty. At this point, if the current tokenization mode is one of Tag, StartAttributeValue, SingleQuoteAttributeValue or DoubleQuoteAttributeValue, then a StartTagClose abstract token is emitted.
 
 ### Default handling rules
 
@@ -96,18 +95,6 @@ This section defines the available tokenization modes.  The only tokens that are
 + SIMPLE_EMPTY_ELEMENT_TAG - emit a StartTagOpen token followed by a EmptyElementTagClose token
 + START_TAG_ATTRIBUTE - emit a StartTagOpen token followed by an AttributeName token and change to StartAttributeValue mode
 + END_TAG - emit an EndTag token
-
-#### Init
-
-This recognizes all the tokens in Main mode plus BOM and S.
-
-BOM and S are handled by changing to Prolog mode.
-
-Other tokens are handled as in Main mode, except that if the current mode is still Init mode after handling the token, the current mode is changed to Main mode.
-
-### Prolog
-
-This is the same as Init mode except that BOM is not recognized.
 
 #### Comment
 
@@ -168,6 +155,10 @@ and so that:
 + the start-tag and EndTag in each element have the same name
 + all attributes in an attribute-list have distinct names
 
+### Stripping BOM and leading whitespace in the prolog
+
+If the sequence of abstract tokens starts with a DataChar token whose code point is #xFEFF, then this DataChar token is removed. Then, if the sequence of abstract tokens starts with one or more DataChar abstract tokens that are whitespace (ie their code point matches the S lexical token), then these DataChar tokens are removed.
+
 ### Duplicate attribute handling
 
 If an attribute has the same name as an earlier attribute, it is ignored.
@@ -180,9 +171,9 @@ If the name of an end-tag does not matches the name of the current open element,
 
 If at the end of input that are open elements, insert end-tags until the open elements are all closed.
 
-### Ignoring insignificant whitespace
+### Stripping whitespace in epilog
 
-If the abstract token sequence consists of a single element followed by one or more whitespace DataChars, then remove the DataChars.
+If the abstract token sequence consists of a single element followed by one or more whitespace DataChar tokens, then these DataChar tokens are removed.
 
 ### Ensuring that there is a single element
 
