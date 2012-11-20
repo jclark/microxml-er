@@ -47,6 +47,8 @@ The tokenization phase works by dividing up the input into _lexical tokens_. Eac
     S ::= #x9 | #xA | #xC | #x20
     SINGLE_QUOTE ::= "'"
     DOUBLE_QUOTE ::= '"'
+    PI_OPEN ::= "<?"
+    PI_CLOSE ::= "?>"
     CDATA_OPEN ::= "<![CDATA["
     CDATA_CLOSE ::= "]]>"
 
@@ -98,6 +100,7 @@ This section defines the available tokenization modes.  The only tokens that are
 + START_TAG_ATTRIBUTE - emit a StartTagOpen token followed by an AttributeName token and change to StartAttributeValue mode
 + END_TAG - emit an EndTag token
 + CDATA_OPEN - change to CData mode
++ PI_OPEN - change to PI mode
 
 #### Comment
 
@@ -138,14 +141,14 @@ This section defines the available tokenization modes.  The only tokens that are
 + DATA_CHAR - default handling
 + CDATA_CLOSE - change to Main mode
 
+#### PI
+
++ DATA_CHAR - do nothing
++ PI_CLOSE - change to Main mode
+
 ### TODO
 
-Define additional tokens:
-
-    DECL_OPEN ::= "<!"
-    PI_OPEN ::= "<?"
-
-and appropriate rules.
+Ignore DOCTYPE declarations.
 
 Maybe handle HTML-style boolean attributes.
 
