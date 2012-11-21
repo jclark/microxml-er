@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>(Micro)XML Error Recovery Demo</title>
+    <script src="recovery.js"></script>
+    <script>
+        function parseText() {
+            var textarea = document.getElementById("text");
+            try {
+                document.getElementById("json").textContent = JSON.stringify(parseMicroXML(textarea.value));
+            }
+            catch (exc) {
+                document.getElementById("json").textContent = "";
+                var message = "Internal error: " + exc.toString() + ".";
+                document.getElementById("result").textContent = message;
+            }
+        }
+   </script>
+</head>
+<body>
+<h1>(Micro)XML Error Recovery Demo</h1><form>
+<textarea id="text" rows="10" cols="80">&lt;doc>&lt;/doc></textarea>
+<input type="button" value="Parse" onclick="parseText();">
+</form>
+<b>JSON data model</b>
+<pre id="json">
+</pre>
+<p id="result"/>
+</body>
+</html>
