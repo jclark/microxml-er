@@ -112,6 +112,7 @@ This section defines the available tokenization modes.  The only tokens that are
 + ATTRIBUTE_NAME_EQUALS - emit a AttributeName token and change to StartAttributeValue mode
 + DATA_CHAR - emit a StartTagClose and a DataChar token and change to Main mode
 + START_TAG_CLOSE, EMPTY_ELEMENT_TAG_CLOSE - default handling
++ S - do nothing
 
 #### StartAttributeValue
 
