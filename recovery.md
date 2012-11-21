@@ -151,6 +151,8 @@ This section defines the available tokenization modes.  The only tokens that are
 
 Ignore DOCTYPE declarations.
 
+Handle decimal character references.
+
 Maybe handle HTML-style boolean attributes.
 
 ## Tree building
