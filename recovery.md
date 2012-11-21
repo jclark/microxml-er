@@ -11,7 +11,7 @@ Parsing is divided in two consecutive phases: tokenization and tree building. In
 + EndTag - associated data is a string (the name of the element)
 + AttributeName - associated data is a string (the name of the attribute)
 
-The tokenization and tree building phase have quote different characteristics.
+The tokenization and tree building phase have quite different characteristics.
 + The tokenization phase does not make use of information about the document type. However, the tree building phase may optionally make use of information about the document type (eg a schema). This specification defines a way of performing the tree building phase that does not make any use of schema information.  It is also possible to define tree building phases that are specific to a particular document type (eg HTML), or that make use of information from a particular kind of schema (eg RELAX NG).  (Note that RELAX NG can be considered as a grammar over abstract tokens.) However, this specification at the moment only defines a document-type independent tree building phase.
 + The tokenization phase is designed to allow for a streaming implementation, whereas the tree-building phase is not.
 + The tokenization phase works equally well for parsing document fragments.
