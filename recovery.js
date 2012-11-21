@@ -136,7 +136,7 @@ mode.Main.on.SIMPLE_START_TAG = function (m, tb, name) {
 mode.Main.on.SIMPLE_EMPTY_ELEMENT_TAG = function (m, tb, name) {
     tb.emitStartTagOpen(name).emitEmptyElementTagClose();
     return m;
-}
+};
 mode.Main.on.START_TAG_ATTRIBUTE = function (m, tb, elemName, attName) {
     tb.emitStartTagOpen(elemName).emitAttributeName(attName);
     return mode.StartAttributeValue;
