@@ -16,6 +16,7 @@ re.NAMED_CHAR_REF = "&(" + re.NAME + ");";
 re.NUMERIC_CHAR_REF = "&#x(" + re.HEX_NUMBER + ");";
 re.ATTRIBUTE_NAME_EQUALS = re.S + "*" + "(" + re.NAME + ")" + re.S + "*=";
 re.START_TAG_OPEN = "<(" + re.NAME + ")";
+re.START_TAG_ATTRIBUTE = re.START_TAG_OPEN + re.S + "+" + re.ATTRIBUTE_NAME_EQUALS;
 re.START_TAG_CLOSE = ">";
 re.EMPTY_ELEMENT_TAG_CLOSE = "/>";
 re.SIMPLE_START_TAG = re.START_TAG_OPEN + re.S + "*" + re.START_TAG_CLOSE;
@@ -92,8 +93,8 @@ Tokenizer.prototype.run = function () {
         mode.DoubleQuoteAttributeValue,
         mode.SingleQuoteAttributeValue,
         mode.UnquoteAttributeValue].indexOf(this.mode) >= 0)
-        this.tb.emitStartTagClose();
-}
+        this.builder.emitStartTagClose();
+};
 
 function Mode() {
     this.on = {};
@@ -108,8 +109,8 @@ Mode.prototype.step = function(tokenizer) {
             var match = tokenizer.input.match(re[name]);
             if (match != null
                 && (bestMatch == null
-                    || match.length > bestMatch.length
-                    || (bestMatchName === "DATA_CHAR" && match.length == bestMatch.length))) {
+                    || match[0].length > bestMatch[0].length
+                    || (bestMatchName === "DATA_CHAR" && match[0].length == bestMatch[0].length))) {
                 bestMatch = match;
                 bestMatchName = name;
             }
@@ -154,6 +155,7 @@ mode.Tag.on.ATTRIBUTE_NAME_EQUALS = function(m, tb, name) {
     tb.emitAttributeName(name);
     return mode.StartAttributeValue;
 };
+mode.Tag.on.S = doNothing;
 mode.Tag.on.DATA_CHAR = function(m, tb, str) {
     tb.emitStartTagClose().emitDataChar(str);
     return mode.Main;
