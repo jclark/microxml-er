@@ -11,9 +11,10 @@ Parsing is divided in two consecutive phases: tokenization and tree building. In
 + EndTag - associated data is a string (the name of the element)
 + AttributeName - associated data is a string (the name of the attribute)
 
-The tokenization phase does not make use of information about the document type. However, the tree building phase may optionally make use of information about the document type (eg a schema). This specification defines a way of performing the tree building phase that does not make any use of schema information.  It does not (yet) define how schema information is to be used if it is available.  
-
-The tokenization phase is also designed to be allow for a streaming implementation, whereas the tree-building phase is not.
+The tokenization and tree building phase have quote different characteristics.
++ The tokenization phase does not make use of information about the document type. However, the tree building phase may optionally make use of information about the document type (eg a schema). This specification defines a way of performing the tree building phase that does not make any use of schema information.  It is also possible to define tree building phases that are specific to a particular document type (eg HTML), or that make use of information from a particular kind of schema (eg RELAX NG).  (Note that RELAX NG can be considered as a grammar over abstract tokens.) However, this specification at the moment only defines a document-type independent tree building phase.
++ The tokenization phase is designed to allow for a streaming implementation, whereas the tree-building phase is not.
++ The tokenization phase works equally well for parsing document fragments.
 
 ## Tokenization
 
@@ -147,14 +148,6 @@ This section defines the available tokenization modes.  The only tokens that are
 + DATA_CHAR - do nothing
 + PI_CLOSE - change to Main mode
 
-### TODO
-
-Ignore DOCTYPE declarations.
-
-Handle decimal character references.
-
-Maybe handle HTML-style boolean attributes.
-
 ## Tree building
 
 The tree building phase turns a sequence of abstract tokens into the MicroXML data model. This is equivalent to transforming the sequence of abstract tokens so that it matches the following grammar for element:
@@ -193,14 +186,21 @@ If the abstract token sequence consists of a single element followed by one or m
 
 If at this point we do not have a single element, wrap everything in an element named `#doc`.
 
+## TODO
 
+Need to do newline normalization as an preprocess in tokenization.
 
+Define an HTML-specific tree builder.
 
+Ignore DOCTYPE declarations.
 
+Handle decimal character references.
 
+Maybe handle HTML-style boolean attributes.
 
+Should there be a CharRef abstract token so that whitespace stripping can take into account whether a character came from a reference or not.
 
-
+Allow use of HTML5 character names.
 
 
 
