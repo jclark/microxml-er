@@ -75,7 +75,7 @@ A step in the tokenization process consists of the following.
 + Possibly changing to another tokenization mode according to the rules for that lexical token in that tokenization mode.
 + Changing the current input to be the sequence of characters following the token.
 
-The tokenization process starts with Main as the current tokenization mode, and the input to the tokenization process as the current input, and repeats the tokenization step until the current input is empty. At this point, if the current tokenization mode is one of Tag, StartAttributeValue, SingleQuoteAttributeValue or DoubleQuoteAttributeValue, then a StartTagClose abstract token is emitted.
+The tokenization process starts with Main as the current tokenization mode, and the input to the tokenization process as the current input, and repeats the tokenization step until the current input is empty. At this point, if the current tokenization mode is one of Tag, StartAttributeValue, UnquoteAttributeValue, SingleQuoteAttributeValue or DoubleQuoteAttributeValue, then a StartTagClose abstract token is emitted.
 
 ### Default handling rules
 
