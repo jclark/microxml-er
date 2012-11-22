@@ -157,7 +157,7 @@ mode.Tag.on.ATTRIBUTE_NAME_EQUALS = function(m, tb, name) {
     return mode.StartAttributeValue;
 };
 mode.Tag.on.S = doNothing;
-mode.Tag.on.EMPTY = function(m, tb, str) {
+mode.Tag.on.EMPTY = function(m, tb) {
     tb.emitStartTagClose();
     return mode.Main;
 };
