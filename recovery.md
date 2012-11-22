@@ -52,6 +52,7 @@ The tokenization phase works by dividing up the input into _lexical tokens_. Eac
     PI_CLOSE ::= "?>"
     CDATA_OPEN ::= "<![CDATA["
     CDATA_CLOSE ::= "]]>"
+    EMPTY ::= ""
 
 The associated data for lexical tokens is as follows:
 
@@ -111,7 +112,7 @@ This section defines the available tokenization modes.  The only tokens that are
 #### Tag
 
 + ATTRIBUTE_NAME_EQUALS - emit a AttributeName token and change to StartAttributeValue mode
-+ DATA_CHAR - emit a StartTagClose and a DataChar token and change to Main mode
++ EMPTY - emit a StartTagClose and change to Main mode
 + START_TAG_CLOSE, EMPTY_ELEMENT_TAG_CLOSE - default handling
 + S - do nothing
 
@@ -202,4 +203,4 @@ Should there be a CharRef abstract token so that whitespace stripping can take i
 
 Allow use of HTML5 character names.
 
-We can simplify things by having an EMPTY token in some modes.
+Take advantage of EMPTY lexical token in some modes.

@@ -28,6 +28,7 @@ re.PI_OPEN = "<\\?";
 re.PI_CLOSE = "\\?>";
 re.CDATA_OPEN = "<\\[CDATA\\[";
 re.CDATA_CLOSE = "\\]\\]>";
+re.EMPTY = "";
 
 (function () {
     for (var name in re)
@@ -116,8 +117,8 @@ Mode.prototype.step = function(tokenizer) {
             }
         }
     }
-    if (bestMatch == null || bestMatch[0].length == 0)
-        throw "Internal error looking at: " + input;
+    if (bestMatch == null)
+        throw "Internal error looking at: " + tokenizer.input;
     tokenizer.input = tokenizer.input.slice(bestMatch[0].length);
     tokenizer.mode = this.on[bestMatchName](this, tokenizer.builder, bestMatch[1], bestMatch[2]);
 };
@@ -156,8 +157,8 @@ mode.Tag.on.ATTRIBUTE_NAME_EQUALS = function(m, tb, name) {
     return mode.StartAttributeValue;
 };
 mode.Tag.on.S = doNothing;
-mode.Tag.on.DATA_CHAR = function(m, tb, str) {
-    tb.emitStartTagClose().emitDataChar(str);
+mode.Tag.on.EMPTY = function(m, tb, str) {
+    tb.emitStartTagClose();
     return mode.Main;
 };
 
