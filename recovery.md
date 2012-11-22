@@ -202,5 +202,4 @@ Should there be a CharRef abstract token so that whitespace stripping can take i
 
 Allow use of HTML5 character names.
 
-
-
+We can simplify things by having an EMPTY token in some modes.
