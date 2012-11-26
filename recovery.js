@@ -174,18 +174,7 @@ mode.StartAttributeValue.on.SINGLE_QUOTE = function(m, tb) { return mode.SingleQ
 mode.StartAttributeValue.on.DOUBLE_QUOTE = function(m, tb) { return mode.DoubleQuoteAttributeValue; };
 mode.StartAttributeValue.on.START_TAG_CLOSE = defaultHandler.START_TAG_CLOSE;
 mode.StartAttributeValue.on.EMPTY_ELEMENT_TAG_CLOSE = defaultHandler.EMPTY_ELEMENT_TAG_CLOSE;
-mode.StartAttributeValue.on.DATA_CHAR = function(m, tb, str) {
-    defaultHandler.DATA_CHAR(m, tb, str);
-    return mode.UnquoteAttributeValue;
-};
-mode.StartAttributeValue.on.NAMED_CHAR_REF = function(m, tb, name) {
-    defaultHandler.NAMED_CHAR_REF(m, tb, name);
-    return mode.UnquoteAttributeValue;
-};
-mode.StartAttributeValue.on.NUMERIC_CHAR_REF = function(m, tb, hex) {
-    defaultHandler.NUMERIC_CHAR_REF(m, tb, hex);
-    return mode.UnquoteAttributeValue;
-};
+mode.StartAttributeValue.on.EMPTY = function(m, tb) { return mode.UnquoteAttributeValue; };
 
 mode.UnquoteAttributeValue = new Mode();
 mode.UnquoteAttributeValue.on.DATA_CHAR = defaultHandler.DATA_CHAR;

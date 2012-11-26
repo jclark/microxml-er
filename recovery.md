@@ -127,7 +127,7 @@ By default, the data associated with a lexical token is associated with any abst
 + S - do nothing
 + SINGLE_QUOTE - change to SingleQuoteAttributeValue mode
 + DOUBLE_QUOTE - change to DoubleQuoteAttributeValue mode
-+ DATA_CHAR, NAMED_CHAR_REF, NUMERIC_CHAR_REF - default handling, then change to UnquoteAttributeValue mode
++ EMPTY - change to UnquoteAttributeValue mode
 + START_TAG_CLOSE, EMPTY_ELEMENT_TAG_CLOSE - default handling
 
 #### UnquoteAttributeValue
@@ -204,5 +204,3 @@ Maybe handle HTML-style boolean attributes.
 Should there be a CharRef abstract token so that whitespace stripping can take into account whether a character came from a reference or not?
 
 Allow use of HTML5 character names.
-
-Take advantage of EMPTY lexical token in some modes.
