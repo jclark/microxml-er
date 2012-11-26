@@ -26,7 +26,7 @@ The input to the tokenization phase is a sequence of characters. The output of t
 
 Before the main part of the tokenization phase, the sequence of characters is preprocessed as follows:
 + if the first character is a Byte Order Mark (#xFEFF), it is removed;
-+ newlines are normalized by replacing any #xA character or #xD/#xA character sequence, by a #xA character.
++ newlines are normalized by replacing any #xD character or #xD/#xA character sequence, by a #xA character.
      
 ### Lexical tokens
 
