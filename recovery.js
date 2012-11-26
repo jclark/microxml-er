@@ -95,6 +95,12 @@ Tokenizer.prototype.run = function () {
         mode.SingleQuoteAttributeValue,
         mode.UnquoteAttributeValue].indexOf(this.mode) >= 0)
         this.builder.emitStartTagClose();
+    return this.builder;
+};
+
+Tokenizer.prototype.preprocess = function () {
+    this.input = this.input.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n");
+    return this;
 };
 
 function Mode() {
@@ -294,7 +300,22 @@ TreeBuilder.prototype.emitAttributeName = function (name) {
 };
 
 TreeBuilder.prototype.strip = function (content) {
-    // TODO
+    var str = content[0]
+    if (typeof(str) === "string") {
+        str = str.replace(/^[ \f\r\t\n]*/, "");
+        if (str === "")
+            content.splice(0, 1);
+        else
+            content[0] = str;
+    }
+    str = content[content.length - 1];
+    if (typeof(str) === "string") {
+        str = str.replace(/[ \f\r\t\n]*$/, "");
+        if (str === "")
+            content.pop();
+        else
+            content[content.length - 1] = str;
+    }
     return content;
 };
 
@@ -311,7 +332,5 @@ TreeBuilder.prototype.end = function () {
 };
 
 function parseMicroXML(str) {
-    var tb = new TreeBuilder();
-    new Tokenizer(str, tb).run();
-    return tb.end();
+    return new Tokenizer(str, new TreeBuilder()).preprocess().run().end();
 }

@@ -23,6 +23,10 @@ The input to the tokenization phase is a sequence of characters. The output of t
     ((StartTagOpen (AttributeName DataChar*)* (EmptyElementTagClose|StartTagClose))
      | DataChar
      | EndTag)*
+
+Before the main part of the tokenization phase, the sequence of characters is preprocessed as follows:
++ if the first character is a Byte Order Mark (#xFEFF), it is removed;
++ newlines are normalized by replacing any #xA character or #xD/#xA character sequence, by a #xA character.
      
 ### Lexical tokens
 
@@ -163,10 +167,6 @@ and so that:
 + the start-tag and EndTag in each element have the same name
 + all attributes in an attribute-list have distinct names
 
-### Stripping BOM and leading whitespace in the prolog
-
-If the sequence of abstract tokens starts with a DataChar token whose code point is #xFEFF, then this DataChar token is removed. Then, if the sequence of abstract tokens starts with one or more DataChar abstract tokens that are whitespace (ie their code point matches the S lexical token), then these DataChar tokens are removed.
-
 ### Duplicate attribute handling
 
 If an attribute has the same name as an earlier attribute, it is ignored.
@@ -179,17 +179,17 @@ If the name of an end-tag does not matches the name of the current open element,
 
 If at the end of input that are open elements, insert end-tags until the open elements are all closed.
 
-### Stripping whitespace in epilog
+### Whitespace stripping
 
-If the abstract token sequence consists of a single element followed by one or more whitespace DataChar tokens, then these DataChar tokens are removed.
+If the abstract token sequence starts with one or more DataChar abstract tokens that are whitespace (ie their code point matches the S lexical token), then these tokens are removed.
+
+If the abstract token sequence ends with one or more DataChar abstract tokens that are whitespace, then these tokens are removed.
 
 ### Ensuring that there is a single element
 
 If at this point we do not have a single element, wrap everything in an element named `#doc`.
 
 ## TODO
-
-Need to do newline normalization as an preprocess in tokenization.
 
 Define an HTML-specific tree builder.
 
