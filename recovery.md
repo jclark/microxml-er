@@ -97,13 +97,15 @@ This section defines default handling rules for certain lexical tokens, which ar
 
 This section defines the available tokenization modes.  The only tokens that are recognized in each mode are those that are explicitly mentioned in each mode.
 
+By default, the data associated with a lexical token is associated with any abstract token that is emitted in the processing of the lexical token and that has associated data.
+
 #### Main
 
 + DATA_CHAR, NAMED_CHAR_REF, NUMERIC_CHAR_REF - default handling
 + COMMENT_OPEN - change to Comment mode
 + SIMPLE_START_TAG - emit a StartTagOpen token followed by a StartTagClose token
 + SIMPLE_EMPTY_ELEMENT_TAG - emit a StartTagOpen token followed by a EmptyElementTagClose token
-+ START_TAG_ATTRIBUTE - emit a StartTagOpen token followed by an AttributeName token and change to StartAttributeValue mode
++ START_TAG_ATTRIBUTE - emit a StartTagOpen token followed by an AttributeName token and change to StartAttributeValue mode; the associated data for the StartTagOpen abstract token is the first of the strings associated with the lexical token; the associated data for the AttributeName is the second.
 + END_TAG - emit an EndTag token
 + CDATA_OPEN - change to CData mode
 + PI_OPEN - change to PI mode
@@ -199,7 +201,7 @@ Handle decimal character references.
 
 Maybe handle HTML-style boolean attributes.
 
-Should there be a CharRef abstract token so that whitespace stripping can take into account whether a character came from a reference or not.
+Should there be a CharRef abstract token so that whitespace stripping can take into account whether a character came from a reference or not?
 
 Allow use of HTML5 character names.
 
