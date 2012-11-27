@@ -213,37 +213,37 @@
 	"result": ["doc",{"att": "x\ny"},[]]
     },
     {
-	"id": "0044",
+	"id": "comment1",
 	"source": "<!-- a document --><doc></doc>",
 	"result": ["doc",{},[]]
     },
     {
-	"id": "0045",
+	"id": "comment2",
 	"source": "<doc></doc><!-- the end -->",
 	"result": ["doc",{},[]]
     },
     {
-	"id": "0046",
+	"id": "comment3",
 	"source": "<doc><!--empty--></doc>",
 	"result": ["doc",{},[]]
     },
     {
-	"id": "0047",
+	"id": "comment4",
 	"source": "<!--Multi\r\nline--><doc></doc>",
 	"result": ["doc",{},[]]
     },
     {
-	"id": "0048",
+	"id": "comment5",
 	"source": "<!----><doc></doc>",
 	"result": ["doc",{},[]]
     },
     {
-	"id": "0049",
+	"id": "comment6",
 	"source": "<!---x-y--><doc></doc>",
 	"result": ["doc",{},[]]
     },
     {
-	"id": "0050",
+	"id": "comment7",
 	"source": "<!--x--y--><doc></doc>",
         "recover": ["doc",{},[]]
     },
@@ -334,34 +334,39 @@
 	"recover": ["doc",{},["&nbsp;"]]
     },
     {
-	"id": "0068",
+	"id": "comment8",
 	"source": "<!--x---><doc></doc>",
 	"recover": ["doc",{},[]]
     },
     {
-	"id": "0069",
+	"id": "comment9",
 	"source": "<!-->--><doc></doc>",
 	"result": ["doc",{},[]]
     },
     {
-	"id": "0070",
+	"id": "comment10",
 	"source": "<!--->--><doc></doc>",
 	"result": ["doc",{},[]]
     },
     {
-	"id": "0071",
+	"id": "comment11",
 	"source": "<!----><doc></doc>",
 	"result": ["doc",{},[]]
     },
     {
-	"id": "0072",
+	"id": "comment12",
 	"source": "<!-----><doc></doc>",
 	"recover": ["doc",{},[]]
     },
     {
-	"id": "0073",
-	"source": "<!---><doc></doc>",
-	"recover": ["#doc",{},[]]
+	"id": "comment13",
+	"source": "<doc><!---></doc>",
+	"recover": ["doc",{},["<!--->"]]
+    },
+    {
+   	"id": "comment14",
+   	"source": "<doc><!--comment</doc>",
+   	"recover": ["doc",{},["<!--comment"]]
     },
     {
 	"id": "0074",

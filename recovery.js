@@ -5,8 +5,7 @@ var defaultHandler = {};
 var re = {};
 var charNames = { lt: "<", gt: ">", amp: "&", quot: '"', apos: "'" };
 
-re.COMMENT_OPEN = "<!--";
-re.COMMENT_CLOSE = "-->";
+re.COMMENT = "<!--(:?[^-]|-[^-]|--[^>])*--+>";
 re.DATA_CHAR = "([\u0000-\uFFFF])";
 re.S = "[\f\t\n ]";
 re.HEX_NUMBER = "[0-9A-fA-F]+";
@@ -133,9 +132,7 @@ mode.Main = new Mode();
 mode.Main.on.DATA_CHAR = defaultHandler.DATA_CHAR;
 mode.Main.on.NAMED_CHAR_REF = defaultHandler.NAMED_CHAR_REF;
 mode.Main.on.NUMERIC_CHAR_REF = defaultHandler.NUMERIC_CHAR_REF;
-mode.Main.on.COMMENT_OPEN = function (m, tb) {
-    return mode.Comment;
-};
+mode.Main.on.COMMENT = doNothing;
 mode.Main.on.SIMPLE_START_TAG = function (m, tb, name) {
     tb.emitStartTagOpen(name).emitStartTagClose();
     return m;
@@ -195,10 +192,6 @@ mode.DoubleQuoteAttributeValue.on.DATA_CHAR = defaultHandler.DATA_CHAR;
 mode.DoubleQuoteAttributeValue.on.NAMED_CHAR_REF = defaultHandler.NAMED_CHAR_REF;
 mode.DoubleQuoteAttributeValue.on.NUMERIC_CHAR_REF = defaultHandler.NUMERIC_CHAR_REF;
 mode.DoubleQuoteAttributeValue.on.DOUBLE_QUOTE = function(m, tb) { return mode.Tag; };
-
-mode.Comment = new Mode();
-mode.Comment.on.DATA_CHAR = doNothing;
-mode.Comment.on.COMMENT_CLOSE = function(m, tb) { return mode.Main; };
 
 mode.CData = new Mode();
 mode.CData.on.DATA_CHAR = defaultHandler.DATA_CHAR;

@@ -33,8 +33,6 @@ Before the main part of the tokenization phase, the sequence of characters is pr
 The tokenization phase works by dividing up the input into _lexical tokens_. Each lexical token has an associated regular grammar and may also have associated data. Lexical tokens are named in UPPER_CASE. The following defines the possible lexical tokens and their grammars using the same notation as the MicroXML spec.
 
     DATA_CHAR ::= [#x0-#x10FFFF]
-    COMMENT_OPEN ::= "<!--"
-    COMMENT_CLOSE ::= "-->"
     SIMPLE_START_TAG ::= START_TAG_OPEN S* START_TAG_CLOSE
     SIMPLE_EMPTY_ELEMENT_TAG ::= START_TAG_OPEN S* EMPTY_ELEMENT_TAG_CLOSE
     START_TAG_ATTRIBUTE ::= START_TAG_OPEN S+ ATTRIBUTE_NAME_EQUALS
@@ -53,6 +51,7 @@ The tokenization phase works by dividing up the input into _lexical tokens_. Eac
     SINGLE_QUOTE ::= "'"
     DOUBLE_QUOTE ::= '"'
     PI ::= "<?" (DATA_CHAR* - (DATA_CHAR* "?>" DATA_CHAR*)) "?>"
+    COMMENT ::= "<!--" (DATA_CHAR* - (DATA_CHAR* "-->" DATA_CHAR*)) "-->"
     CDATA_OPEN ::= "<![CDATA["
     CDATA_CLOSE ::= "]]>"
     EMPTY ::= ""
@@ -101,18 +100,12 @@ By default, the data associated with a lexical token is associated with any abst
 #### Main
 
 + DATA_CHAR, NAMED_CHAR_REF, NUMERIC_CHAR_REF - default handling
-+ COMMENT_OPEN - change to Comment mode
 + SIMPLE_START_TAG - emit a StartTagOpen token followed by a StartTagClose token
 + SIMPLE_EMPTY_ELEMENT_TAG - emit a StartTagOpen token followed by a EmptyElementTagClose token
 + START_TAG_ATTRIBUTE - emit a StartTagOpen token followed by an AttributeName token and change to StartAttributeValue mode; the associated data for the StartTagOpen abstract token is the first of the strings associated with the lexical token; the associated data for the AttributeName is the second.
 + END_TAG - emit an EndTag token
 + CDATA_OPEN - change to CData mode
-+ PI - do nothing
-
-#### Comment
-
-+ DATA_CHAR - do nothing
-+ COMMENT_CLOSE - change to Main mode
++ COMMENT, PI - do nothing
 
 #### Tag
 
@@ -198,5 +191,3 @@ Maybe handle HTML-style boolean attributes.
 Should there be a CharRef abstract token so that whitespace stripping can take into account whether a character came from a reference or not?
 
 Allow use of HTML5 character names.
-
-Make comments be a single token.
