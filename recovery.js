@@ -3,6 +3,7 @@
 var mode = {};
 var defaultHandler = {};
 var re = {};
+var charNames = { lt: "<", gt: ">", amp: "&", quot: '"', apos: "'" };
 
 re.COMMENT_OPEN = "<!--";
 re.COMMENT_CLOSE = "-->";
@@ -46,8 +47,8 @@ defaultHandler.DATA_CHAR = function (m, tb, str) {
 };
 
 defaultHandler.NAMED_CHAR_REF = function (m, tb, name) {
-    var str = lookupCharName(name);
-    if (str != null)
+    var str = charNames[name];
+    if (str)
 	tb.emitDataChar(str);
     else
 	tb.emitDataChar("&" + name + ";");
