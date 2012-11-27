@@ -139,12 +139,12 @@
         "recover": ["#doc",{},["<></>"]]
     },
     {
-	"id": "0029",
+	"id": "xml-decl1",
 	"source": "<?xml version=\"1.0\"?>\n<doc></doc>",
         "recover": ["doc",{},[]]
     },
     {
-	"id": "0030",
+	"id": "pi1",
 	"source": "<?pi value?><doc></doc>",
         "recover": ["doc",{},[]]
     },
@@ -603,5 +603,25 @@
         "id": "0121",
         "source": "<doc att1='val1'att2='val2'/>",
         "recover": ["doc", {"att1":"val1", "att2":"val2"}, []]
+    },
+    {
+        "id": "pi2",
+        "source": "<??><doc/>",
+        "recover": ["doc", {}, []]
+    },
+    {
+        "id": "pi3",
+        "source": "<doc/><?pi>?>",
+        "recover": ["doc", {}, []]
+    },
+    {
+        "id": "pi4",
+        "source": "<doc><?pi??></doc>",
+        "recover": ["doc", {}, []]
+    },
+    {
+        "id": "pi5",
+        "source": "<doc><?>?></doc>",
+        "recover": ["doc", {}, []]
     }
  ]

@@ -52,8 +52,7 @@ The tokenization phase works by dividing up the input into _lexical tokens_. Eac
     S ::= #x9 | #xA | #xC | #x20
     SINGLE_QUOTE ::= "'"
     DOUBLE_QUOTE ::= '"'
-    PI_OPEN ::= "<?"
-    PI_CLOSE ::= "?>"
+    PI ::= "<?" (DATA_CHAR* - (DATA_CHAR* "?>" DATA_CHAR*)) "?>"
     CDATA_OPEN ::= "<![CDATA["
     CDATA_CLOSE ::= "]]>"
     EMPTY ::= ""
@@ -108,7 +107,7 @@ By default, the data associated with a lexical token is associated with any abst
 + START_TAG_ATTRIBUTE - emit a StartTagOpen token followed by an AttributeName token and change to StartAttributeValue mode; the associated data for the StartTagOpen abstract token is the first of the strings associated with the lexical token; the associated data for the AttributeName is the second.
 + END_TAG - emit an EndTag token
 + CDATA_OPEN - change to CData mode
-+ PI_OPEN - change to PI mode
++ PI - do nothing
 
 #### Comment
 
@@ -149,11 +148,6 @@ By default, the data associated with a lexical token is associated with any abst
 
 + DATA_CHAR - default handling
 + CDATA_CLOSE - change to Main mode
-
-#### PI
-
-+ DATA_CHAR - do nothing
-+ PI_CLOSE - change to Main mode
 
 ## Tree building
 
@@ -206,5 +200,3 @@ Should there be a CharRef abstract token so that whitespace stripping can take i
 Allow use of HTML5 character names.
 
 Make comments be a single token.
-
-Make PIs be a single token.

@@ -25,8 +25,7 @@ re.SIMPLE_EMPTY_ELEMENT_TAG = re.START_TAG_OPEN + re.S + "*" + re.EMPTY_ELEMENT_
 re.END_TAG = "</(" + re.NAME + ")" + re.S + "*>";
 re.SINGLE_QUOTE = "'";
 re.DOUBLE_QUOTE = "\"";
-re.PI_OPEN = "<\\?";
-re.PI_CLOSE = "\\?>";
+re.PI = "<\\?(:?[^?]|\\?[^>])*\\?+>";
 re.CDATA_OPEN = "<!\\[CDATA\\[";
 re.CDATA_CLOSE = "\\]\\]>";
 re.EMPTY = "";
@@ -154,7 +153,7 @@ mode.Main.on.END_TAG = function (m, tb, name) {
     return m;
 };
 mode.Main.on.CDATA_OPEN = function (m, tb, name) { return mode.CData; };
-mode.Main.on.PI_OPEN = function(m, tb, name) { return mode.PI; };
+mode.Main.on.PI = doNothing;
 
 mode.Tag = new Mode();
 mode.Tag.on.START_TAG_CLOSE = defaultHandler.START_TAG_CLOSE;
@@ -200,10 +199,6 @@ mode.DoubleQuoteAttributeValue.on.DOUBLE_QUOTE = function(m, tb) { return mode.T
 mode.Comment = new Mode();
 mode.Comment.on.DATA_CHAR = doNothing;
 mode.Comment.on.COMMENT_CLOSE = function(m, tb) { return mode.Main; };
-
-mode.PI = new Mode();
-mode.PI.on.DATA_CHAR = doNothing;
-mode.PI.on.PI_CLOSE = function(m, tb) { return mode.Main; };
 
 mode.CData = new Mode();
 mode.CData.on.DATA_CHAR = defaultHandler.DATA_CHAR;
