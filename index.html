@@ -19,12 +19,33 @@
 </head>
 <body>
 <h1>(Micro)XML Error Recovery Demo</h1><form>
+<p>This is a demonstration of (Micro)XML parsing with error recovering
+following
+this <a href="https://github.com/jclark/microxml-er/blob/master/recovery.md">specification</a>.
+The <a href="https://github.com/jclark/microxml-er/blob/master/recovery.js">implementation</a> is in JavaScript and runs in the browser.
+Note that the implementation is not designed for high performance; rather it is designed to be as close as possible to a translation into JavaScript
+of the prose of the specification.</p>
+
+<p>To try this demo, Type or paste some input into the text box below
+and then click the Parse button.  The parsed result will be shown
+in <a href="http://www.jsonml.org">JsonML</a> format. Each element is
+represented by an
+array <code>[<var>name</var>, <var>attributes</var>, <var>content</var>]</code>,
+where <code><var>name</var></code> is a string giving the name of the
+element,
+<code><var>attributes</var></code> is an object with a string-valued property for each attribute,
+and <code><var>content</var></code> is an array containing elements or strings giving the content of the element.</p>
+
+<p>If you find bugs, please report them
+to <a href="mailto:jjc@jclark.com">me</a>, or,
+better, <a href="https://github.com/jclark/microxml-er/issues">open an
+issue</a>.</p>
+
 <textarea id="text" rows="10" cols="80">&lt;doc>&lt;/doc></textarea>
+
 <input type="button" value="Parse" onclick="parseText();">
 </form>
-<b>JSON data model</b>
-<pre id="json">
-</pre>
-<p id="result"/>
+<p><b>Parse result in JSON format:</b> <code id="json">["doc", {}, []]</code></p>
+<address>James Clark</address
 </body>
 </html>
