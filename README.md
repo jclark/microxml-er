@@ -1,1 +1,3 @@
 This repository contains a [specification](/jclark/microxml-er/blob/master/recovery.md) for error recovery for [MicroXML](http://www.w3.org/community/microxml/).
+
+It also contains a sample implementation in JavaScript. this implementation is not designed for performance; rather it is designed to be as close as possible to a translation into JavaScript of the informal prose of the specification. You can play with the implementation [online](http://jclark.github.com/microxml-er/).
