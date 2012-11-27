@@ -204,3 +204,7 @@ Maybe handle HTML-style boolean attributes.
 Should there be a CharRef abstract token so that whitespace stripping can take into account whether a character came from a reference or not?
 
 Allow use of HTML5 character names.
+
+Make comments be a single token.
+
+Make PIs be a single token.
