@@ -27,7 +27,7 @@ re.SINGLE_QUOTE = "'";
 re.DOUBLE_QUOTE = "\"";
 re.PI_OPEN = "<\\?";
 re.PI_CLOSE = "\\?>";
-re.CDATA_OPEN = "<\\[CDATA\\[";
+re.CDATA_OPEN = "<!\\[CDATA\\[";
 re.CDATA_CLOSE = "\\]\\]>";
 re.EMPTY = "";
 
@@ -206,7 +206,7 @@ mode.PI.on.DATA_CHAR = doNothing;
 mode.PI.on.PI_CLOSE = function(m, tb) { return mode.Main; };
 
 mode.CData = new Mode();
-mode.CData.on.DATA_CHAR = doNothing;
+mode.CData.on.DATA_CHAR = defaultHandler.DATA_CHAR;
 mode.CData.on.CDATA_CLOSE = function(m, tb) { return mode.Main; };
 
 var TreeBuilder = function () {
