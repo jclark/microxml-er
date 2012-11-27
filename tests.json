@@ -188,8 +188,8 @@
     },
     {
 	"id": "0039",
-	"source": "<doc>&#xD;</doc>",
-	"recover": ["doc",{},["\r"]]
+	"source": "\r<doc\r></doc\r>\r",
+	"result": ["doc",{},[]]
     },
     {
 	"id": "0040",
@@ -454,7 +454,8 @@
     },
     {
 	"id": "0092",
-	"source": "<doc att='val>Forgot the closing quote</doc>"
+	"source": "<doc att='val>Forgot the closing quote</doc>",
+	"recover": ["doc",{"att": "val>Forgot the closing quote</doc>"},[]]
     },
     {
 	"id": "0093",
@@ -463,7 +464,8 @@
     },
     {
 	"id": "0094",
-	"source": "<doc att='\b'></doc>"
+	"source": "<doc att='\b'></doc>",
+	"recover": ["doc",{"att": "\b"},[]]
     },
     {
 	"id": "0095",
@@ -472,7 +474,8 @@
     },
     {
 	"id": "0096",
-	"source": "<doc><!--\b--></doc>"
+	"source": "<doc><!--\b--></doc>",
+	"recover": ["doc",{},[]]
     },
     {
 	"id": "0097",
@@ -520,51 +523,63 @@
     },
     {
 	"id": "0106",
-	"source": "<doc>&#xD800;</doc>"
+	"source": "<doc>&#xD800;</doc>",
+	"recover": ["doc",{},["\uD800"]]
     },
     {
 	"id": "0107",
-	"source": "<doc>&#xDC00;</doc>"
+	"source": "<doc>&#xDC00;</doc>",
+	"recover": ["doc",{},["\uDC00"]]
     },
     {
 	"id": "0108",
-	"source": "<doc>&#xDFFF;</doc>"
+	"source": "<doc>&#xDFFF;</doc>",
+	"recover": ["doc",{},["\uDFFF"]]
     },
     {
 	"id": "0109",
-	"source": "<doc>&#xD;</doc>"
+	"source": "<doc>&#xD;</doc>",
+	"recover": ["doc",{},["\u000D"]]
     },
     {
 	"id": "0110",
-	"source": "<doc>&#x0;</doc>"
+	"source": "<doc>&#x0;</doc>",
+	"recover": ["doc",{},["\u0000"]]
     },
     {
 	"id": "0111",
-	"source": "<doc>&#x8;</doc>"
+	"source": "<doc>&#x8;</doc>",
+	"recover": ["doc",{},["\u0008"]]
     },
     {
 	"id": "0112",
-	"source": "<doc>&#xFFFE;</doc>"
+	"source": "<doc>&#xFFFE;</doc>",
+	"recover": ["doc",{},["\uFFFE"]]
     },
     {
 	"id": "0113",
-	"source": "<doc>&#x10FFFF;</doc>"
+	"source": "<doc>&#x10FFFF;</doc>",
+	"recover": ["doc",{},["\uDBFF\uDFFF"]]
     },
     {
 	"id": "0114",
-	"source": "<doc>&#x9f;</doc>"
+	"source": "<doc>&#x9f;</doc>",
+	"recover": ["doc",{},["\u009F"]]
     },
     {
 	"id": "0115",
-	"source": "<doc>\uDC00</doc>"
+	"source": "<doc>\uDC00</doc>",
+	"recover": ["doc",{},["\uDC00"]]
     },
     {
 	"id": "0116",
-	"source": "<doc>\uD800"
+	"source": "<doc>\uD800",
+	"recover": ["doc",{},["\uD800"]]
     },
     {
 	"id": "0117",
-	"source": "<doc>\uD800</doc>"
+	"source": "<doc>\uD800</doc>",
+	"recover": ["doc",{},["\uD800"]]
     },
     {
 	"id": "0118",
