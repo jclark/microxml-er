@@ -5,7 +5,6 @@ var defaultHandler = {};
 var re = {};
 var charNames = { lt: "<", gt: ">", amp: "&", quot: '"', apos: "'" };
 
-re.COMMENT = "<!--(:?[^-]|-[^-]|--[^>])*--+>";
 re.DATA_CHAR = "([\u0000-\uFFFF])";
 re.S = "[\f\t\n ]";
 re.HEX_NUMBER = "[0-9A-fA-F]+";
@@ -24,7 +23,8 @@ re.SIMPLE_EMPTY_ELEMENT_TAG = re.START_TAG_OPEN + re.S + "*" + re.EMPTY_ELEMENT_
 re.END_TAG = "</(" + re.NAME + ")" + re.S + "*>";
 re.SINGLE_QUOTE = "'";
 re.DOUBLE_QUOTE = "\"";
-re.PI = "<\\?(:?[^?]|\\?[^>])*\\?+>";
+re.COMMENT = "<!--(?:[^-]|-[^-]|--[^>])*--+>";
+re.PI = "<\\?(?:[^?]|\\?[^>])*\\?+>";
 re.CDATA_OPEN = "<!\\[CDATA\\[";
 re.CDATA_CLOSE = "\\]\\]>";
 re.EMPTY = "";
