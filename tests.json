@@ -135,15 +135,18 @@
     },
     {
 	"id": "0028",
-	"source": "<></>"
+	"source": "<></>",
+        "recover": ["#doc",{},["<></>"]]
     },
     {
 	"id": "0029",
-	"source": "<?xml version=\"1.0\"?>\n<doc></doc>"
+	"source": "<?xml version=\"1.0\"?>\n<doc></doc>",
+        "recover": ["doc",{},[]]
     },
     {
 	"id": "0030",
-	"source": "<?pi value?><doc></doc>"
+	"source": "<?pi value?><doc></doc>",
+        "recover": ["doc",{},[]]
     },
     {
 	"id": "0031",
@@ -151,7 +154,8 @@
     },
     {
 	"id": "0032",
-	"source": "<doc><![CDATA[stuff]]></doc>"
+	"source": "<doc><![CDATA[<x>stuff</x>]]></doc>",
+	"recover": ["doc",{},["<x>stuff</x>"]]
     },
     {
 	"id": "0033",
@@ -160,7 +164,8 @@
     },
     {
 	"id": "0034",
-	"source": "<doc xml:lang='en'/>"
+	"source": "<doc xml:lang='en'/>",
+        "recover": ["doc", {"xml:lang": "en"}, []]
     },
     {
 	"id": "0035",
@@ -178,11 +183,13 @@
     },
     {
 	"id": "0038",
-	"source": "<doc>\u0080</doc>"
+	"source": "<doc>\u0080</doc>",
+	"recover": ["doc",{},["\u0080"]]
     },
     {
 	"id": "0039",
-	"source": "<doc>&#xD;</doc>"
+	"source": "<doc>&#xD;</doc>",
+	"recover": ["doc",{},["\r"]]
     },
     {
 	"id": "0040",
@@ -261,27 +268,33 @@
     },
     {
 	"id": "0055",
-	"source": "<-/>"
+	"source": "<-/>",
+	"recover": ["#doc",{},["<-/>"]]
     },
     {
 	"id": "0056",
-	"source": "<./>"
+	"source": "<./>",
+	"recover": ["#doc",{},["<./>"]]
     },
     {
 	"id": "0057",
-	"source": "<9/>"
+	"source": "<9/>",
+	"recover": ["#doc",{},["<9/>"]]
     },
     {
 	"id": "0058",
-	"source": "<x$/>"
+	"source": "<x$/>",
+	"recover": ["x$",{},[]]
     },
     {
 	"id": "0059",
-	"source": "<doc att='val1' att='val2'/>"
+	"source": "<doc att='val1' att='val2'/>",
+	"recover": ["doc", {"att":"val1"}, []]
     },
     {
 	"id": "0060",
-	"source": "<doc></DOC>"
+	"source": "<doc></DOC>",
+	"recover": ["doc", {}, []]
     },
     {
 	"id": "0061",
@@ -300,7 +313,8 @@
     },
     {
 	"id": "0064",
-	"source": "<doc __proto__='val' __proto__='val'/>"
+	"source": "<doc __proto__='val' __proto__='val'/>",
+	"recover": ["doc",{"__proto__": "val"},[]]
     },
     {
 	"id": "0065",
@@ -314,11 +328,13 @@
     },
     {
 	"id": "0067",
-	"source": "<doc>&nbsp;</doc>"
+	"source": "<doc>&nbsp;</doc>",
+	"recover": ["doc",{},["&nbsp;"]]
     },
     {
 	"id": "0068",
-	"source": "<!--x---><doc></doc>"
+	"source": "<!--x---><doc></doc>",
+	"recover": ["doc",{},[]]
     },
     {
 	"id": "0069",
@@ -337,15 +353,18 @@
     },
     {
 	"id": "0072",
-	"source": "<!-----><doc></doc>"
+	"source": "<!-----><doc></doc>",
+	"recover": ["doc",{},[]]
     },
     {
 	"id": "0073",
-	"source": "<!---><doc></doc>"
+	"source": "<!---><doc></doc>",
+	"recover": ["#doc",{},[]]
     },
     {
 	"id": "0074",
-	"source": "<\u0300/>"
+	"source": "<\u0300/>",
+	"recover": ["\u0300",{},[]]
     },
     {
 	"id": "0075",
@@ -355,7 +374,8 @@
     {
 	"id": "0076",
 	"comment": "This is #x10FFFF (the maximum code point), which is a noncharacter",
-	"source": "<doc>\uDBFF\uDFFF</doc>"
+	"source": "<doc>\uDBFF\uDFFF</doc>",
+	"recover": ["doc",{},["\uDBFF\uDFFF"]]
     },
     {
 	"id": "0077",
@@ -404,27 +424,33 @@
     },
     {
 	"id": "0086",
-	"source": "<doc>\b</doc>"
+	"source": "<doc>\b</doc>",
+	"recover": ["doc",{},["\b"]]
     },
     {
 	"id": "0087",
-	"source": "<doc>\f</doc>"
+	"source": "<doc>\f</doc>",
+	"recover": ["doc",{},["\f"]]
     },
     {
 	"id": "0088",
-	"source": "<doc>\uFFFF</doc>"
+	"source": "<doc>\uFFFF</doc>",
+	"recover": ["doc",{},["\uFFFF"]]
     },
     {
 	"id": "0089",
-	"source": "<doc>\u0000</doc>"
+	"source": "<doc>\u0000</doc>",
+	"recover": ["doc",{},["\u0000"]]
     },
     {
 	"id": "0090",
-	"source": "<doc>\u007F</doc>"
+	"source": "<doc>\u007F</doc>",
+	"recover": ["doc",{},["\u007F"]]
     },
     {
 	"id": "0091",
-	"source": "<doc>\u0080</doc>"
+	"source": "<doc>\u0080</doc>",
+	"recover": ["doc",{},["\u0080"]]
     },
     {
 	"id": "0092",
