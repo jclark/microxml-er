@@ -1,0 +1,562 @@
+[
+    {
+	"id": "0001",
+	"source": "<doc></doc>",
+	"result": ["doc",{},[]]
+    },
+    {
+	"id": "0002",
+	"source": "<doc/>",
+	"result": ["doc",{},[]]
+    },
+    {
+	"id": "0003",
+	"source": "\uFEFF<doc></doc>",
+	"result": ["doc",{},[]]
+    },
+    {
+	"id": "0004",
+	"source": "\n\r\t <doc></doc>\n\r\t ",
+	"result": ["doc",{},[]]
+    },
+    {
+	"id": "0005",
+	"source": "<doc att='val'/>",
+	"result": ["doc",{"att": "val"},[]]
+    },
+    {
+	"id": "0006",
+	"source": "<doc att='val'/>",
+	"result": ["doc",{"att": "val"},[]]
+    },
+    {
+	"id": "0007",
+	"source": "<doc att=''/>",
+	"result": ["doc",{"att": ""},[]]
+    },
+    {
+	"id": "0008",
+	"source": "<doc att1='val1' att2='val2'/>",
+	"result": ["doc",{"att1": "val1", "att2": "val2"},[]]
+    },
+    {
+	"id": "0009",
+	"source": "<doc att='\"'/>",
+	"result": ["doc",{"att": "\""},[]]
+    },
+    {
+	"id": "0010",
+	"source": "<doc att=\"'\"/>",
+	"result": ["doc",{"att": "'"},[]]
+    },
+    {
+	"id": "0011",
+	"source": "<doc \n\r\r\n\t/>",
+	"result": ["doc",{},[]]
+    },
+    {
+	"id": "0012",
+	"source": "<doc \n\r\r\n\t></doc>",
+	"result": ["doc",{},[]]
+    },
+    {
+	"id": "0013",
+	"source": "<doc></doc \n\r\r\n\t>",
+	"result": ["doc",{},[]]
+    },
+    {
+	"id": "0014",
+	"source": "<doc \n\r\r\n\t/>",
+	"result": ["doc",{},[]]
+    },
+    {
+	"id": "0015",
+	"source": "<doc><p></p></doc>",
+	"result": ["doc",{},[["p",{},[]]]]
+    },
+    {
+	"id": "0016",
+	"source": "<doc><p/></doc>",
+	"result": ["doc",{},[["p",{},[]]]]
+    },
+    {
+	"id": "0017",
+	"source": "<doc>foo</doc>",
+	"result": ["doc",{},["foo"]]
+    },
+    {
+	"id": "0018",
+	"source": "",
+        "recover": ["#doc",{},[]]
+    },
+    {
+	"id": "0019",
+	"source": "foo",
+        "recover": ["#doc",{},["foo"]]
+    },
+    {
+	"id": "0020",
+	"source": "<doc>",
+        "recover": ["doc",{},[]]
+    },
+    {
+	"id": "0021",
+	"source": "< doc></doc>",
+        "recover": ["#doc",{},["< doc>"]]
+    },
+    {
+	"id": "0022",
+	"source": "<doc att=val/>",
+        "recover": ["doc", {"att": "val"}, []]
+    },
+    {
+	"id": "0023",
+	"source": "<doc></document>",
+        "recover": ["doc",{},[]]
+    },
+    {
+	"id": "0024",
+	"source": "<doc><foo><bar></foo></bar></doc>",
+        "recover": ["doc",{},[["foo",{},[["bar",{},[]]]]]]
+    },
+    {
+	"id": "0025",
+	"source": "<doc></doc" ,
+        "recover": ["doc",{},["</doc"]]
+    },
+    {
+	"id": "0026",
+	"source": "<doc></doc"
+    },
+    {
+	"id": "0027",
+	"source": "</>",
+        "recover": ["#doc",{},["</>"]]
+    },
+    {
+	"id": "0028",
+	"source": "<></>"
+    },
+    {
+	"id": "0029",
+	"source": "<?xml version=\"1.0\"?>\n<doc></doc>"
+    },
+    {
+	"id": "0030",
+	"source": "<?pi value?><doc></doc>"
+    },
+    {
+	"id": "0031",
+	"source": "<!DOCTYPE html><html></html>"
+    },
+    {
+	"id": "0032",
+	"source": "<doc><![CDATA[stuff]]></doc>"
+    },
+    {
+	"id": "0033",
+	"source": "<doc xmlns='http://www.w3.org'></doc>",
+        "recover": ["doc", {"xmlns": "http://www.w3.org"}, []]
+    },
+    {
+	"id": "0034",
+	"source": "<doc xml:lang='en'/>"
+    },
+    {
+	"id": "0035",
+	"source": "<doc>2>1</doc>",
+        "recover": ["doc", {}, ["2>1"]]
+    },
+    {
+	"id": "0036",
+	"source": "<doc att='2>1'/>",
+        "recover": ["doc", {"att": "2>1"}, []]
+    },
+    {
+	"id": "0037",
+	"source": "<doc>&#120;</doc>"
+    },
+    {
+	"id": "0038",
+	"source": "<doc>\u0080</doc>"
+    },
+    {
+	"id": "0039",
+	"source": "<doc>&#xD;</doc>"
+    },
+    {
+	"id": "0040",
+	"source": "<doc>x\r\ny</doc>",
+	"result": ["doc",{},["x\ny"]]
+    },
+    {
+	"id": "0041",
+	"source": "<doc att='x\r\ny'/>",
+	"result": ["doc",{"att": "x\ny"},[]]
+    },
+    {
+	"id": "0042",
+	"source": "<doc>x\ry</doc>",
+	"result": ["doc",{},["x\ny"]]
+    },
+    {
+	"id": "0043",
+	"source": "<doc att='x\ry'/>",
+	"result": ["doc",{"att": "x\ny"},[]]
+    },
+    {
+	"id": "0044",
+	"source": "<!-- a document --><doc></doc>",
+	"result": ["doc",{},[]]
+    },
+    {
+	"id": "0045",
+	"source": "<doc></doc><!-- the end -->",
+	"result": ["doc",{},[]]
+    },
+    {
+	"id": "0046",
+	"source": "<doc><!--empty--></doc>",
+	"result": ["doc",{},[]]
+    },
+    {
+	"id": "0047",
+	"source": "<!--Multi\r\nline--><doc></doc>",
+	"result": ["doc",{},[]]
+    },
+    {
+	"id": "0048",
+	"source": "<!----><doc></doc>",
+	"result": ["doc",{},[]]
+    },
+    {
+	"id": "0049",
+	"source": "<!---x-y--><doc></doc>",
+	"result": ["doc",{},[]]
+    },
+    {
+	"id": "0050",
+	"source": "<!--x--y--><doc></doc>",
+        "recover": ["doc",{},[]]
+    },
+    {
+	"id": "0051",
+	"source": "<doc att='x\ty'/>",
+	"result": ["doc",{"att": "x\ty"},[]]
+    },
+    {
+	"id": "0052",
+	"source": "<doc att='x\ny'/>",
+	"result": ["doc",{"att": "x\ny"},[]]
+    },
+    {
+	"id": "0053",
+	"source": "<abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/>",
+	"result": ["abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",{},[]]
+    },
+    {
+	"id": "0054",
+	"source": "<_-./>",
+	"result": ["_-.",{},[]]
+    },
+    {
+	"id": "0055",
+	"source": "<-/>"
+    },
+    {
+	"id": "0056",
+	"source": "<./>"
+    },
+    {
+	"id": "0057",
+	"source": "<9/>"
+    },
+    {
+	"id": "0058",
+	"source": "<x$/>"
+    },
+    {
+	"id": "0059",
+	"source": "<doc att='val1' att='val2'/>"
+    },
+    {
+	"id": "0060",
+	"source": "<doc></DOC>"
+    },
+    {
+	"id": "0061",
+	"source": "<doc att='val' att='val'/>"
+    },
+    {
+	"id": "0062",
+	"source": "<doc att='val' ATT='VAL'/>",
+	"result": ["doc",{"att": "val", "ATT": "VAL"},[]]
+    },
+    {
+	"id": "0063",
+	"comment": "There's some JavaScript weirdness with __proto__ properties",
+	"source": "<doc __proto__='val'/>",
+	"result": ["doc",{"__proto__": "val"},[]]
+    },
+    {
+	"id": "0064",
+	"source": "<doc __proto__='val' __proto__='val'/>"
+    },
+    {
+	"id": "0065",
+	"source": "<doc>&lt;&gt;&amp;&quot;&apos;</doc>",
+	"result": ["doc",{},["<>&\"'"]]
+    },
+    {
+	"id": "0066",
+	"source": "<doc att='&lt;&gt;&amp;&quot;&apos;'/>",
+	"result": ["doc",{"att": "<>&\"'"}, []]
+    },
+    {
+	"id": "0067",
+	"source": "<doc>&nbsp;</doc>"
+    },
+    {
+	"id": "0068",
+	"source": "<!--x---><doc></doc>"
+    },
+    {
+	"id": "0069",
+	"source": "<!-->--><doc></doc>",
+	"result": ["doc",{},[]]
+    },
+    {
+	"id": "0070",
+	"source": "<!--->--><doc></doc>",
+	"result": ["doc",{},[]]
+    },
+    {
+	"id": "0071",
+	"source": "<!----><doc></doc>",
+	"result": ["doc",{},[]]
+    },
+    {
+	"id": "0072",
+	"source": "<!-----><doc></doc>"
+    },
+    {
+	"id": "0073",
+	"source": "<!---><doc></doc>"
+    },
+    {
+	"id": "0074",
+	"source": "<\u0300/>"
+    },
+    {
+	"id": "0075",
+	"source": "<\u02FF/>",
+	"result": ["\u02FF",{},[]]
+    },
+    {
+	"id": "0076",
+	"comment": "This is #x10FFFF (the maximum code point), which is a noncharacter",
+	"source": "<doc>\uDBFF\uDFFF</doc>"
+    },
+    {
+	"id": "0077",
+	"comment": "This is #x10FFFD, the maximum code point that is not a noncharacter",
+	"source": "<doc>\uDBFF\uDFFD</doc>",
+	"result": ["doc",{},["\uDBFF\uDFFD"]]
+    },
+    {
+	"id": "0078",
+	"source": "<\uD800X/>"
+    },
+    {
+	"id": "0079",
+	"source": "<doc></doc>junk",
+        "recover": ["#doc",{},[["doc",{},[]], "junk"]]
+    },
+    {
+	"id": "0080",
+	"source": "<doc></doc><doc/>",
+        "recover": ["#doc",{},[["doc",{},[]], ["doc",{},[]]]]
+    },
+    {
+	"id": "0081",
+	"source": "<doc></doc> \n\r\t",
+	"result": ["doc",{},[]]
+    },
+    {
+	"id": "0082",
+	"source": "<doc>x<br/>y</doc>",
+	"result": ["doc",{},["x", ["br",{},[]], "y"]]
+    },
+    {
+	"id": "0083",
+	"source": "<doc></doc>",
+	"result": ["doc",{},[]]
+    },
+    {
+	"id": "0084",
+	"source": "<doc>x<!-- a comment -->y</doc>",
+	"result": ["doc",{},["xy"]]
+    },
+    {
+	"id": "0085",
+	"source": "<doc> \t\n</doc>",
+	"result": ["doc",{},[" \t\n"]]
+    },
+    {
+	"id": "0086",
+	"source": "<doc>\b</doc>"
+    },
+    {
+	"id": "0087",
+	"source": "<doc>\f</doc>"
+    },
+    {
+	"id": "0088",
+	"source": "<doc>\uFFFF</doc>"
+    },
+    {
+	"id": "0089",
+	"source": "<doc>\u0000</doc>"
+    },
+    {
+	"id": "0090",
+	"source": "<doc>\u007F</doc>"
+    },
+    {
+	"id": "0091",
+	"source": "<doc>\u0080</doc>"
+    },
+    {
+	"id": "0092",
+	"source": "<doc att='val>Forgot the closing quote</doc>"
+    },
+    {
+	"id": "0093",
+	"source": "<doc att='val",
+        "recover": ["doc", {"att": "val"}, []]
+    },
+    {
+	"id": "0094",
+	"source": "<doc att='\b'></doc>"
+    },
+    {
+	"id": "0095",
+	"source": "<doc att='<'></doc>",
+        "recover": ["doc", {"att": "<"}, []]
+    },
+    {
+	"id": "0096",
+	"source": "<doc><!--\b--></doc>"
+    },
+    {
+	"id": "0097",
+	"source": "<doc>&#x3c;</doc>",
+	"result": ["doc",{},["<"]]
+    },
+    {
+	"id": "0098",
+	"source": "<doc>&#x3c;</doc>",
+	"result": ["doc",{},["<"]]
+    },
+    {
+	"id": "0099",
+	"source": "<doc>&#x26;</doc>",
+	"result": ["doc",{},["&"]]
+    },
+    {
+	"id": "0100",
+	"source": "<doc>&#x3E;</doc>",
+	"result": ["doc",{},[">"]]
+    },
+    {
+	"id": "0101",
+	"source": "<doc>&#xFFFD;</doc>",
+	"result": ["doc",{},["\uFFFD"]]
+    },
+    {
+	"id": "0102",
+	"source": "<doc>&#x10000;</doc>",
+	"result": ["doc",{},["\uD800\uDC00"]]
+    },
+    {
+	"id": "0103",
+	"source": "<doc>&#x9;&#xA;&#x20;</doc>",
+	"result": ["doc",{},["\t\n "]]
+    },
+    {
+	"id": "0104",
+	"source": "<doc att=\"&#x22;\"/>",
+	"result": ["doc",{"att": "\""},[]]
+    },
+    {
+	"id": "0105",
+	"source": "<doc>&#x110000;</doc>"
+    },
+    {
+	"id": "0106",
+	"source": "<doc>&#xD800;</doc>"
+    },
+    {
+	"id": "0107",
+	"source": "<doc>&#xDC00;</doc>"
+    },
+    {
+	"id": "0108",
+	"source": "<doc>&#xDFFF;</doc>"
+    },
+    {
+	"id": "0109",
+	"source": "<doc>&#xD;</doc>"
+    },
+    {
+	"id": "0110",
+	"source": "<doc>&#x0;</doc>"
+    },
+    {
+	"id": "0111",
+	"source": "<doc>&#x8;</doc>"
+    },
+    {
+	"id": "0112",
+	"source": "<doc>&#xFFFE;</doc>"
+    },
+    {
+	"id": "0113",
+	"source": "<doc>&#x10FFFF;</doc>"
+    },
+    {
+	"id": "0114",
+	"source": "<doc>&#x9f;</doc>"
+    },
+    {
+	"id": "0115",
+	"source": "<doc>\uDC00</doc>"
+    },
+    {
+	"id": "0116",
+	"source": "<doc>\uD800"
+    },
+    {
+	"id": "0117",
+	"source": "<doc>\uD800</doc>"
+    },
+    {
+	"id": "0118",
+	"source": "<\uD800\uDC00/>",
+	"result": ["\uD800\uDC00",{},[]]
+    },
+    {
+	"id": "0119",
+	"source": "<\uDB7F\uDFFF/>"
+    },
+    {
+	"id": "0120",
+	"source": "<\uDB7F\uDFFD/>",
+	"result": ["\uDB7F\uDFFD",{},[]]
+    },
+    {
+        "id": "0121",
+        "source": "<doc att1='val1'att2='val2'/>",
+        "recover": ["doc", {"att1":"val1", "att2":"val2"}, []]
+    }
+ ]
