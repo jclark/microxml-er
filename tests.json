@@ -179,7 +179,8 @@
     },
     {
 	"id": "0037",
-	"source": "<doc>&#120;</doc>"
+	"source": "<doc>&#120;</doc>",
+        "recover": ["doc", {}, "&#120;"]
     },
     {
 	"id": "0038",
@@ -298,7 +299,8 @@
     },
     {
 	"id": "0061",
-	"source": "<doc att='val' att='val'/>"
+	"source": "<doc att='val' att='val'/>",
+        "recover": ["doc", {"att":"val"}, []]
     },
     {
 	"id": "0062",
@@ -385,7 +387,8 @@
     },
     {
 	"id": "0078",
-	"source": "<\uD800X/>"
+	"source": "<\uD800X/>",
+        "recover": ["\uD800X", {}, []]
     },
     {
 	"id": "0079",
@@ -588,7 +591,8 @@
     },
     {
 	"id": "0119",
-	"source": "<\uDB7F\uDFFF/>"
+	"source": "<\uDB7F\uDFFF/>",
+        "recover": ["\uDB7F\uDFFF",{},[]]
     },
     {
 	"id": "0120",
