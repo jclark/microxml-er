@@ -623,5 +623,10 @@
         "id": "pi5",
         "source": "<doc><?>?></doc>",
         "recover": ["doc", {}, []]
+    },
+    {
+        "id": "pi6",
+        "source": "<doc><?pi</doc>",
+        "recover": ["doc", {}, ["<?pi"]]
     }
  ]
