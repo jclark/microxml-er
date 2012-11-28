@@ -8,11 +8,11 @@
             var textarea = document.getElementById("text");
             try {
                 document.getElementById("json").textContent = JSON.stringify(parseMicroXML(textarea.value));
+                document.getElementById("result").textContent = "";
             }
             catch (exc) {
                 document.getElementById("json").textContent = "";
-                var message = "Internal error: " + exc.toString() + ".";
-                document.getElementById("result").textContent = message;
+                document.getElementById("result").textContent = exc.toString();
             }
         }
    </script>
