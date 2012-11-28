@@ -28,6 +28,13 @@ re.PI = "<\\?(?:[^?]|\\?[^>])*\\?+>";
 re.CDATA_OPEN = "<!\\[CDATA\\[";
 re.CDATA_CLOSE = "\\]\\]>";
 re.EMPTY = "";
+// For DOCTYPE handling
+re.DOCTYPE_OPEN = "<![Dd][Oo][Cc][Tt][Yy][Pp][Ee]";
+re.LITERAL = "(?:\"[^\"]*\"|'[^']*')";
+re.DECL_CHAR = "[^\\][<>\"']";
+re.DECL = "<!(:?" + re.DECL_CHAR + "|" + re.LITERAL + ")*>";
+re.SUBSET_CLOSE = "\\]" + re.S + "*>";
+re.SUBSET_OPEN = "\\[";
 
 (function () {
     for (var name in re)
@@ -151,6 +158,7 @@ mode.Main.on.END_TAG = function (m, tb, name) {
 };
 mode.Main.on.CDATA_OPEN = function (m, tb, name) { return mode.CData; };
 mode.Main.on.PI = doNothing;
+mode.Main.on.DOCTYPE_OPEN = function (m, tb) { return mode.Doctype; };
 
 mode.Tag = new Mode();
 mode.Tag.on.START_TAG_CLOSE = defaultHandler.START_TAG_CLOSE;
@@ -171,7 +179,7 @@ mode.StartAttributeValue.on.SINGLE_QUOTE = function(m, tb) { return mode.SingleQ
 mode.StartAttributeValue.on.DOUBLE_QUOTE = function(m, tb) { return mode.DoubleQuoteAttributeValue; };
 mode.StartAttributeValue.on.START_TAG_CLOSE = defaultHandler.START_TAG_CLOSE;
 mode.StartAttributeValue.on.EMPTY_ELEMENT_TAG_CLOSE = defaultHandler.EMPTY_ELEMENT_TAG_CLOSE;
-mode.StartAttributeValue.on.EMPTY = function(m, tb) { return mode.UnquoteAttributeValue; };
+mode.StartAttributeValue.on.EMPTY = function (m, tb) { return mode.UnquoteAttributeValue; };
 
 mode.UnquoteAttributeValue = new Mode();
 mode.UnquoteAttributeValue.on.DATA_CHAR = defaultHandler.DATA_CHAR;
@@ -196,6 +204,21 @@ mode.DoubleQuoteAttributeValue.on.DOUBLE_QUOTE = function(m, tb) { return mode.T
 mode.CData = new Mode();
 mode.CData.on.DATA_CHAR = defaultHandler.DATA_CHAR;
 mode.CData.on.CDATA_CLOSE = function(m, tb) { return mode.Main; };
+
+mode.Doctype = new Mode();
+mode.Doctype.on.DECL_CHAR = doNothing;
+mode.Doctype.on.LITERAL = doNothing;
+mode.Doctype.on.SUBSET_OPEN = function (m, tb) { return mode.Subset; };
+mode.Doctype.on.START_TAG_CLOSE = function (m, tb) { return mode.Main; };
+mode.Doctype.on.EMPTY = function(m, tb) { return mode.Main; };
+
+mode.Subset = new Mode();
+mode.Subset.on.PI = doNothing;
+mode.Subset.on.COMMENT = doNothing;
+mode.Subset.on.S = doNothing;
+mode.Subset.on.DECL = doNothing;
+mode.Subset.on.SUBSET_CLOSE = function (m, tb) { return mode.Main; };
+mode.Subset.on.EMPTY = function (m, tb) { return mode.Main; };
 
 var TreeBuilder = function () {
     this.openElements = [[null, null, []]];

@@ -55,6 +55,12 @@ The tokenization phase works by dividing up the input into _lexical tokens_. Eac
     CDATA_OPEN ::= "<![CDATA["
     CDATA_CLOSE ::= "]]>"
     EMPTY ::= ""
+    DOCTYPE_OPEN ::= "<!" [Dd] [Oo] [Cc] [Tt] [Yy] [Pp] [Ee]
+    LITERAL ::= '"' (DATA_CHAR - '"')* '"' | "'" (DATA_CHAR - "'")* "'"
+    DECL_CHAR ::= DATA_CHAR - ("[" | "]" | "<" | ">" | '"'| "'")
+    DECL ::= "<!" (DECL_CHAR | LITERAL)* ">"
+    SUBSET_OPEN ::= "["
+    SUBSET_CLOSE ::= "]" S* ">";
 
 The associated data for lexical tokens is as follows:
 
@@ -106,6 +112,7 @@ By default, the data associated with a lexical token is associated with any abst
 + END_TAG - emit an EndTag token
 + CDATA_OPEN - change to CData mode
 + COMMENT, PI - do nothing
++ DOCTYPE_OPEN - change to Doctype mode
 
 #### Tag
 
@@ -141,6 +148,17 @@ By default, the data associated with a lexical token is associated with any abst
 
 + DATA_CHAR - default handling
 + CDATA_CLOSE - change to Main mode
+
+#### Doctype
+
++ DECL_CHAR, LITERAL - do nothing
++ EMPTY, START_TAG_CLOSE - change to Main mode
++ SUBSET_OPEN - change to Subset mode
+
+#### Subset
+
++ COMMENT, PI, DECL, S - do nothing
++ SUBSET_CLOSE, EMPTY - change to Main mode
 
 ## Tree building
 
@@ -181,8 +199,6 @@ If at this point we do not have a single element, wrap everything in an element 
 ## TODO
 
 Define an HTML-specific tree builder.
-
-Ignore DOCTYPE declarations.
 
 Handle decimal character references.
 

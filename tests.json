@@ -149,8 +149,9 @@
         "recover": ["doc",{},[]]
     },
     {
-	"id": "0031",
-	"source": "<!DOCTYPE html><html></html>"
+	"id": "doctype1",
+	"source": "<!DOCTYPE html><html></html>",
+        "recover": ["html",{},[]]
     },
     {
 	"id": "0032",
@@ -633,5 +634,20 @@
         "id": "pi6",
         "source": "<doc><?pi</doc>",
         "recover": ["doc", {}, ["<?pi"]]
+    },
+    {
+        "id": "doctype2",
+        "source": "<!DOCTYPE doc SYSTEM '>'><doc/>",
+        "recover": ["doc", {}, []]
+    },
+    {
+        "id": "doctype3",
+        "source": "<!DOCTYPE doc SYSTEM '[>' [ <!-- stuff]> --> <?pi]>?><!ELEMENT doc EMPTY> ] > <doc/>",
+        "recover": ["doc", {}, []]
+    },
+    {
+        "id": "doctype4",
+        "source": "<!DOCTYPE doc SYSTEM <doc>stuff</doc>",
+        "recover": ["doc", {}, ["stuff"]]
     }
  ]
