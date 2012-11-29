@@ -649,5 +649,20 @@
         "id": "doctype4",
         "source": "<!DOCTYPE doc SYSTEM <doc>stuff</doc>",
         "recover": ["doc", {}, ["stuff"]]
+    },
+    {
+        "id": "doctype5",
+        "source": "<!Doctype doc><doc/>",
+        "recover": ["doc", {}, []]
+    },
+    {
+        "id": "doctype6",
+        "source": "<doc><!Doctype doc></doc>",
+        "recover": ["doc", {}, []]
+    },
+    {
+        "id": "doctype7",
+        "source": "<!DOCTYPE doc [ stuff]>",
+        "recover": ["#doc", {}, ["stuff]>"]]
     }
  ]
