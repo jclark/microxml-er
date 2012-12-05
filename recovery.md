@@ -2,9 +2,9 @@
 
 This specification defines a way to parse any sequence of characters into a generalization of the MicroXML data model. The generalization is that there are no restrictions on the characters that can occur in names or in data.
 
-Parsing is divided in two consecutive phases: tokenization and tree building. Information is passed from the tokenization phase to the tree building phase as a sequence of  _abstract tokens_. Abstract tokens are named in CamelCase and each token may have associated data.  The following abstract tokens are defined:
+Parsing is divided in two consecutive phases: tokenization and tree building. Information is passed from the tokenization phase to the tree building phase as a sequence of  _abstract tokens_. Abstract tokens are named in CamelCase and each token may have associated data, which is a string.  The following abstract tokens are defined:
 
-+ DataChar - associated data is a code point
++ DataChar - associated data is a string containing exactly one code point
 + StartTagOpen - associated data is a string (the name of the element)
 + StartTagClose
 + EmptyElementTagClose 
@@ -30,44 +30,40 @@ Before the main part of the tokenization phase, the sequence of characters is pr
      
 ### Lexical tokens
 
-The tokenization phase works by dividing up the input into _lexical tokens_. Each lexical token has an associated regular grammar and may also have associated data. Lexical tokens are named in UPPER_CASE. The following defines the possible lexical tokens and their grammars using the same notation as the MicroXML spec.
+The tokenization phase works by dividing up the input into _lexical tokens_. Each lexical token has an associated regular grammar. Lexical tokens are named in UPPER_CASE. The following defines the possible lexical tokens and their grammars using the same notation as the MicroXML spec.
 
-    DATA_CHAR ::= [#x0-#x10FFFF]
-    SIMPLE_START_TAG ::= START_TAG_OPEN S* START_TAG_CLOSE
-    SIMPLE_EMPTY_ELEMENT_TAG ::= START_TAG_OPEN S* EMPTY_ELEMENT_TAG_CLOSE
-    START_TAG_ATTRIBUTE ::= START_TAG_OPEN S+ ATTRIBUTE_NAME_EQUALS
+Each lexical token may have associated data which is a sequence of one or more strings, each of which is a substring of the token. The production for each lexical tokens that has associated data is prefixed by a number in parentheses indicating the number of substrings of associated data, and parentheses on the right-hand side (possibly within referenced productions) identify the substrings.
+
+    CHAR ::= [#x0-#x10FFFF]
+    (1) DATA_CHAR ::= (CHAR)
+    (1) SIMPLE_START_TAG ::= START_TAG_OPEN S* START_TAG_CLOSE
+    (1) SIMPLE_EMPTY_ELEMENT_TAG ::= START_TAG_OPEN S* EMPTY_ELEMENT_TAG_CLOSE
+    (2) START_TAG_ATTRIBUTE ::= START_TAG_OPEN S+ ATTRIBUTE_NAME_EQUALS
     START_TAG_CLOSE ::= ">"
     EMPTY_ELEMENT_TAG_CLOSE ::= "/>"
-    END_TAG ::= "</" NAME S* ">"
-    START_TAG_OPEN ::= "<" NAME
-    ATTRIBUTE_NAME_EQUALS ::= S* NAME S* "="
+    (1) END_TAG ::= "</" (NAME) S* ">"
+    (1) START_TAG_OPEN ::= "<" (NAME)
+    (1) ATTRIBUTE_NAME_EQUALS ::= S* (NAME) S* "="
     NAME ::= NAME_START_CHAR NAME_CHAR*
     NAME_START_CHAR ::= [A-Za-z_:$] | [#x80-#x10FFFF]
     NAME_CHAR ::= NAME_START_CHAR | [0-9] | "-" | "."
-    NAMED_CHAR_REF ::= "&" NAME ";"
-    NUMERIC_CHAR_REF ::= "&#x" HEX_NUMBER ";"
+    (1) NAMED_CHAR_REF ::= "&" (NAME) ";"
+    (1) NUMERIC_CHAR_REF ::= "&#x" (HEX_NUMBER) ";"
     HEX_NUMBER ::= [0-9a-fA-F]+
     S ::= #x9 | #xA | #xC | #x20
     SINGLE_QUOTE ::= "'"
     DOUBLE_QUOTE ::= '"'
-    PI ::= "<?" (DATA_CHAR* - (DATA_CHAR* "?>" DATA_CHAR*)) "?>"
-    COMMENT ::= "<!--" (DATA_CHAR* - (DATA_CHAR* "-->" DATA_CHAR*)) "-->"
+    PI ::= "<?" (CHAR* - (CHAR* "?>" CHAR*)) "?>"
+    COMMENT ::= "<!--" (CHAR* - (CHAR* "-->" CHAR*)) "-->"
     CDATA_OPEN ::= "<![CDATA["
     CDATA_CLOSE ::= "]]>"
     EMPTY ::= ""
     DOCTYPE_OPEN ::= "<!" [Dd] [Oo] [Cc] [Tt] [Yy] [Pp] [Ee]
-    LITERAL ::= '"' (DATA_CHAR - '"')* '"' | "'" (DATA_CHAR - "'")* "'"
-    DECL_CHAR ::= DATA_CHAR - ("[" | "]" | "<" | ">" | '"'| "'")
+    LITERAL ::= '"' (CHAR - '"')* '"' | "'" (CHAR - "'")* "'"
+    DECL_CHAR ::= CHAR - ("[" | "]" | "<" | ">" | '"'| "'")
     DECL ::= "<!" (DECL_CHAR | LITERAL)* ">"
     SUBSET_OPEN ::= "["
     SUBSET_CLOSE ::= "]" S* ">";
-
-The associated data for lexical tokens is as follows:
-
-+ START_TAG_OPEN, END_TAG, ATTRIBUTE_NAME_EQUALS and NAMED_CHAR_REF have a string (which is a NAME)
-+ START_TAG_ATTRIBUTE has two strings (both NAMES, an element name and an attribute name)
-+ NUMERIC_CHAR_REF has a non-negative integer
-+ DATA_CHAR has a code-point (a non-negative integer in the range 0 to #x10FFFF)
 
 There are a number of different named tokenization modes.  Each tokenization mode specifies
 
@@ -93,7 +89,7 @@ This section defines default handling rules for certain lexical tokens, which ar
 
 + DATA_CHAR - emit a DataChar token
 + NAMED_CHAR_REF - if the associated string is a valid character name emit a single DataChar, otherwise emit a DataChar for each character in the NAMED_CHAR_REF 
-+ NUMERIC_CHAR_REF - if the associated number is <= #x10FFFF emit a single DataChar, otherwise emit a DataChar for each character in the NUMERIC_CHAR_REF
++ NUMERIC_CHAR_REF - if the number represented in hexadecimal by the associated string is <= #x10FFFF emit a single DataChar whose associated data is a code point with that number, otherwise emit a DataChar for each character in the NUMERIC_CHAR_REF (ie for `&#x` followed by the associated string followed by `;`)
 + START_TAG_CLOSE - emit a StartTagClose token and change to Main mode
 + EMPTY_ELEMENT_TAG_CLOSE - emit an EmptyElementTagClose token and change to Main mode
 
@@ -101,7 +97,7 @@ This section defines default handling rules for certain lexical tokens, which ar
 
 This section defines the available tokenization modes.  The only tokens that are recognized in each mode are those that are explicitly mentioned in each mode.
 
-By default, the data associated with a lexical token is associated with any abstract token that is emitted in the processing of the lexical token and that has associated data.
+The data associated with a lexical token is also by default associated with any abstract token that is emitted in the processing of the lexical token and that has associated data.
 
 #### Main
 
