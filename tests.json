@@ -179,9 +179,9 @@
         "recover": ["doc", {"att": "2>1"}, []]
     },
     {
-	"id": "0037",
+	"id": "decimalcharref1",
 	"source": "<doc>&#120;</doc>",
-        "recover": ["doc", {}, "&#120;"]
+        "recover": ["doc", {}, "x"]
     },
     {
 	"id": "0038",
@@ -664,5 +664,10 @@
         "id": "doctype7",
         "source": "<!DOCTYPE doc [ stuff]>",
         "recover": ["#doc", {}, ["stuff]>"]]
+    },
+    {
+        "id": "decimalcharref2",
+        "source": "<doc>&#060;</doc>",
+        "recover": ["doc", {}, "<"]
     }
  ]

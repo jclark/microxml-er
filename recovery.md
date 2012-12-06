@@ -48,8 +48,7 @@ Each lexical token may have associated data which is a sequence of one or more s
     NAME_START_CHAR ::= [A-Za-z_:$] | [#x80-#x10FFFF]
     NAME_CHAR ::= NAME_START_CHAR | [0-9] | "-" | "."
     (1) NAMED_CHAR_REF ::= "&" (NAME) ";"
-    (1) NUMERIC_CHAR_REF ::= "&#x" (HEX_NUMBER) ";"
-    HEX_NUMBER ::= [0-9a-fA-F]+
+    (1) NUMERIC_CHAR_REF ::= "&#" ("x" [0-9a-fA-F]+ | [0-9]+) ";"
     S ::= #x9 | #xA | #xC | #x20
     SINGLE_QUOTE ::= "'"
     DOUBLE_QUOTE ::= '"'
@@ -89,7 +88,8 @@ This section defines default handling rules for certain lexical tokens, which ar
 
 + DATA_CHAR - emit a DataChar token
 + NAMED_CHAR_REF - if the associated string is a valid character name emit a single DataChar, otherwise emit a DataChar for each character in the NAMED_CHAR_REF 
-+ NUMERIC_CHAR_REF - if the number represented in hexadecimal by the associated string is <= #x10FFFF emit a single DataChar whose associated data is a code point with that number, otherwise emit a DataChar for each character in the NUMERIC_CHAR_REF (ie for `&#x` followed by the associated string followed by `;`)
++ NUMERIC_CHAR_REF - if the string starts with "x", then let _n_ be the result of treating the part of the string following the "x" as a hexadecimal number, otherwise let _n_ be the result of treating the string as a decimal number; if _n_ is <= #x10FFFF emit a single DataChar whose associated data is a code point with that number, otherwise emit a DataChar for each character in the NUMERIC_CHAR_REF (ie for `&#` followed by the associated string followed by `;`)
++ DECIMAL_CHAR_REF
 + START_TAG_CLOSE - emit a StartTagClose token and change to Main mode
 + EMPTY_ELEMENT_TAG_CLOSE - emit an EmptyElementTagClose token and change to Main mode
 
@@ -195,8 +195,6 @@ If at this point we do not have a single element, wrap everything in an element 
 ## TODO
 
 Define an HTML-specific tree builder.
-
-Handle decimal character references.
 
 Maybe handle HTML-style boolean attributes.
 

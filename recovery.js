@@ -7,12 +7,11 @@ var charNames = { lt: "<", gt: ">", amp: "&", quot: '"', apos: "'" };
 
 re.DATA_CHAR = "([\u0000-\uFFFF])";
 re.S = "[\f\t\n ]";
-re.HEX_NUMBER = "[0-9A-fA-F]+";
 re.NAME_START_CHAR = "[A-Za-z_:$\u0080-\uFFFF]";
 re.NAME_CHAR = "[-.0-9" + re.NAME_START_CHAR.slice(1);
 re.NAME = re.NAME_START_CHAR + re.NAME_CHAR + "*";
 re.NAMED_CHAR_REF = "&(" + re.NAME + ");";
-re.NUMERIC_CHAR_REF = "&#x(" + re.HEX_NUMBER + ");";
+re.NUMERIC_CHAR_REF = "&#(x[0-9A-fA-F]+|[0-9]+);";
 re.ATTRIBUTE_NAME_EQUALS = re.S + "*" + "(" + re.NAME + ")" + re.S + "*=";
 re.START_TAG_OPEN = "<(" + re.NAME + ")";
 re.START_TAG_ATTRIBUTE = re.START_TAG_OPEN + re.S + "+" + re.ATTRIBUTE_NAME_EQUALS;
@@ -60,8 +59,12 @@ defaultHandler.NAMED_CHAR_REF = function (m, tb, name) {
     return m;
 };
 
-defaultHandler.NUMERIC_CHAR_REF = function (m, tb, hex) {
-    var n = parseInt(hex, 16);
+defaultHandler.NUMERIC_CHAR_REF = function (m, tb, ref) {
+    var n;
+    if (ref[0] == "x")
+        n = parseInt(ref.substr(1), 16);
+    else
+        n = parseInt(ref, 10);
     var str;
     if (n <= 0xFFFF)
 	str = String.fromCharCode(n);
@@ -70,7 +73,7 @@ defaultHandler.NUMERIC_CHAR_REF = function (m, tb, hex) {
 	str = String.fromCharCode((n >> 10) | 0xD800, (n & 0x3FF) | 0xDC00);
     }
     else
-	str = "&#x" + hex + ";";
+	str = "&#" + str + ";";
     tb.emitDataChar(str);
     return m;
 };
