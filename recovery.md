@@ -88,7 +88,7 @@ This section defines default handling rules for certain lexical tokens, which ar
 
 + DATA_CHAR - emit a DataChar token
 + NAMED_CHAR_REF - if the associated string is a valid character name emit a single DataChar, otherwise emit a DataChar for each character in the NAMED_CHAR_REF 
-+ NUMERIC_CHAR_REF - if the string starts with "x", then let _n_ be the result of treating the part of the string following the "x" as a hexadecimal number, otherwise let _n_ be the result of treating the string as a decimal number; if _n_ is <= #x10FFFF emit a single DataChar whose associated data is a code point with that number, otherwise emit a DataChar for each character in the NUMERIC_CHAR_REF (ie for `&#` followed by the associated string followed by `;`)
++ NUMERIC_CHAR_REF - if the string starts with "x", then let _n_ be the result of treating the part of the string following the "x" as a hexadecimal number, otherwise let _n_ be the result of treating the string as a decimal number; if _n_ is <= #x10FFFF emit a single DataChar whose associated data is a string containing a character with code-point _n_, otherwise emit a DataChar for each character in the NUMERIC_CHAR_REF (ie for `&#` followed by the associated string followed by `;`)
 + DECIMAL_CHAR_REF
 + START_TAG_CLOSE - emit a StartTagClose token and change to Main mode
 + EMPTY_ELEMENT_TAG_CLOSE - emit an EmptyElementTagClose token and change to Main mode
