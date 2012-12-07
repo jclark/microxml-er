@@ -42,7 +42,7 @@ A lexical token whose production below is prefixed by a `*` has associated data,
     START_TAG_CLOSE ::= ">"
     EMPTY_ELEMENT_TAG_CLOSE ::= "/>"
     *END_TAG ::= "</" (NAME) S* ">"
-    TAG_CONTEXT = (S+ NAME)* S* (START_TAG_CLOSE | EMPTY_ELEMENT_TAG_CLOSE | S NAME S* "=")
+    TAG_CONTEXT ::= (S+ NAME)* S* (START_TAG_CLOSE | EMPTY_ELEMENT_TAG_CLOSE | S NAME S* "=")
     NAME ::= NAME_START_CHAR NAME_CHAR*
     NAME_START_CHAR ::= [A-Za-z_:$] | [#x80-#x10FFFF]
     NAME_CHAR ::= NAME_START_CHAR | [0-9] | "-" | "."
