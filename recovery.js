@@ -12,13 +12,14 @@ re.NAME_CHAR = "[-.0-9" + re.NAME_START_CHAR.slice(1);
 re.NAME = re.NAME_START_CHAR + re.NAME_CHAR + "*";
 re.NAMED_CHAR_REF = "&(" + re.NAME + ");";
 re.NUMERIC_CHAR_REF = "&#(x[0-9A-fA-F]+|[0-9]+);";
-re.ATTRIBUTE_NAME_EQUALS = re.S + "*" + "(" + re.NAME + ")" + re.S + "*=";
-re.START_TAG_OPEN = "<(" + re.NAME + ")";
-re.START_TAG_ATTRIBUTE = re.START_TAG_OPEN + re.S + "+" + re.ATTRIBUTE_NAME_EQUALS;
 re.START_TAG_CLOSE = ">";
 re.EMPTY_ELEMENT_TAG_CLOSE = "/>";
-re.SIMPLE_START_TAG = re.START_TAG_OPEN + re.S + "*" + re.START_TAG_CLOSE;
-re.SIMPLE_EMPTY_ELEMENT_TAG = re.START_TAG_OPEN + re.S + "*" + re.EMPTY_ELEMENT_TAG_CLOSE;
+re.ATTRIBUTE_NAME_EQUALS = re.S + "*" + "(" + re.NAME + ")" + re.S + "*=";
+re.TAG_CONTEXT = "(?=(?:" + re.S + "+" + re.NAME + ")*" + re.S + "*" +
+    "(?:" + re.START_TAG_CLOSE + "|" + re.EMPTY_ELEMENT_TAG_CLOSE + "|" + re.S + re.NAME + re.S + "*=)" +
+    ")";
+re.START_TAG_OPEN = "<(" + re.NAME + ")" + re.TAG_CONTEXT;
+re.BOOLEAN_ATTRIBUTE = re.S + "*(" + re.NAME + ")" + re.TAG_CONTEXT;
 re.END_TAG = "</(" + re.NAME + ")" + re.S + "*>";
 re.SINGLE_QUOTE = "'";
 re.DOUBLE_QUOTE = "\"";
@@ -43,6 +44,12 @@ re.SUBSET_OPEN = "\\[";
 
 function doNothing(m, tb) {
     return m;
+}
+
+function changeMode(m) {
+    return function (curMode, tb) {
+        return m;
+    };
 }
 
 defaultHandler.DATA_CHAR = function (m, tb, str) {
@@ -73,7 +80,7 @@ defaultHandler.NUMERIC_CHAR_REF = function (m, tb, ref) {
 	str = String.fromCharCode((n >> 10) | 0xD800, (n & 0x3FF) | 0xDC00);
     }
     else
-	str = "&#" + str + ";";
+	str = "&#" + ref + ";";
     tb.emitDataChar(str);
     return m;
 };
@@ -114,7 +121,6 @@ Tokenizer.prototype.preprocess = function () {
 
 function Mode() {
     this.on = {};
-    this.compiled = false;
 }
 
 Mode.prototype.step = function(tokenizer) {
@@ -123,10 +129,10 @@ Mode.prototype.step = function(tokenizer) {
     for (var name in this.on) {
         if (this.on.hasOwnProperty(name)) {
             var match = tokenizer.input.match(re[name]);
-            if (match != null
-                && (bestMatch == null
+            if (match !== null
+                && (bestMatch === null
                     || match[0].length > bestMatch[0].length
-                    || (bestMatchName === "DATA_CHAR" && match[0].length == bestMatch[0].length))) {
+                    || (bestMatchName === "DATA_CHAR" && match[0].length === bestMatch[0].length))) {
                 bestMatch = match;
                 bestMatchName = name;
             }
@@ -138,37 +144,42 @@ Mode.prototype.step = function(tokenizer) {
     tokenizer.mode = this.on[bestMatchName](this, tokenizer.builder, bestMatch[1], bestMatch[2]);
 };
 
+// Define modes here so we can refer to them in changeMode.
 mode.Main = new Mode();
+mode.Tag = new Mode();
+mode.StartAttributeValue = new Mode();
+mode.UnquoteAttributeValue = new Mode();
+mode.SingleQuoteAttributeValue = new Mode();
+mode.DoubleQuoteAttributeValue = new Mode();
+mode.CData = new Mode();
+mode.Doctype = new Mode();
+mode.Subset = new Mode();
+
 mode.Main.on.DATA_CHAR = defaultHandler.DATA_CHAR;
 mode.Main.on.NAMED_CHAR_REF = defaultHandler.NAMED_CHAR_REF;
 mode.Main.on.NUMERIC_CHAR_REF = defaultHandler.NUMERIC_CHAR_REF;
 mode.Main.on.COMMENT = doNothing;
-mode.Main.on.SIMPLE_START_TAG = function (m, tb, name) {
-    tb.emitStartTagOpen(name).emitStartTagClose();
-    return m;
-};
-mode.Main.on.SIMPLE_EMPTY_ELEMENT_TAG = function (m, tb, name) {
-    tb.emitStartTagOpen(name).emitEmptyElementTagClose();
-    return m;
-};
-mode.Main.on.START_TAG_ATTRIBUTE = function (m, tb, elemName, attName) {
-    tb.emitStartTagOpen(elemName).emitAttributeName(attName);
-    return mode.StartAttributeValue;
+mode.Main.on.START_TAG_OPEN = function (m, tb, name) {
+    tb.emitStartTagOpen(name);
+    return mode.Tag;
 };
 mode.Main.on.END_TAG = function (m, tb, name) {
     tb.emitEndTag(name);
     return m;
 };
-mode.Main.on.CDATA_OPEN = function (m, tb, name) { return mode.CData; };
+mode.Main.on.CDATA_OPEN = changeMode(mode.CData);
 mode.Main.on.PI = doNothing;
-mode.Main.on.DOCTYPE_OPEN = function (m, tb) { return mode.Doctype; };
+mode.Main.on.DOCTYPE_OPEN = changeMode(mode.Doctype);
 
-mode.Tag = new Mode();
 mode.Tag.on.START_TAG_CLOSE = defaultHandler.START_TAG_CLOSE;
 mode.Tag.on.EMPTY_ELEMENT_TAG_CLOSE = defaultHandler.EMPTY_ELEMENT_TAG_CLOSE;
 mode.Tag.on.ATTRIBUTE_NAME_EQUALS = function(m, tb, name) {
     tb.emitAttributeName(name);
     return mode.StartAttributeValue;
+};
+mode.Tag.on.BOOLEAN_ATTRIBUTE = function(m, tb, name) {
+    tb.emitAttributeName(name);
+    return m;
 };
 mode.Tag.on.S = doNothing;
 mode.Tag.on.EMPTY = function(m, tb) {
@@ -176,52 +187,45 @@ mode.Tag.on.EMPTY = function(m, tb) {
     return mode.Main;
 };
 
-mode.StartAttributeValue = new Mode();
 mode.StartAttributeValue.on.S = doNothing;
-mode.StartAttributeValue.on.SINGLE_QUOTE = function(m, tb) { return mode.SingleQuoteAttributeValue; };
-mode.StartAttributeValue.on.DOUBLE_QUOTE = function(m, tb) { return mode.DoubleQuoteAttributeValue; };
+mode.StartAttributeValue.on.SINGLE_QUOTE = changeMode(mode.SingleQuoteAttributeValue);
+mode.StartAttributeValue.on.DOUBLE_QUOTE = changeMode(mode.DoubleQuoteAttributeValue);
 mode.StartAttributeValue.on.START_TAG_CLOSE = defaultHandler.START_TAG_CLOSE;
 mode.StartAttributeValue.on.EMPTY_ELEMENT_TAG_CLOSE = defaultHandler.EMPTY_ELEMENT_TAG_CLOSE;
-mode.StartAttributeValue.on.EMPTY = function (m, tb) { return mode.UnquoteAttributeValue; };
+mode.StartAttributeValue.on.EMPTY = changeMode(mode.UnquoteAttributeValue);
 
-mode.UnquoteAttributeValue = new Mode();
 mode.UnquoteAttributeValue.on.DATA_CHAR = defaultHandler.DATA_CHAR;
 mode.UnquoteAttributeValue.on.NAMED_CHAR_REF = defaultHandler.NAMED_CHAR_REF;
 mode.UnquoteAttributeValue.on.NUMERIC_CHAR_REF = defaultHandler.NUMERIC_CHAR_REF;
 mode.UnquoteAttributeValue.on.START_TAG_CLOSE = defaultHandler.START_TAG_CLOSE;
 mode.UnquoteAttributeValue.on.EMPTY_ELEMENT_TAG_CLOSE = defaultHandler.EMPTY_ELEMENT_TAG_CLOSE;
-mode.UnquoteAttributeValue.on.S = function(m, tb) { return mode.Tag; };
+mode.UnquoteAttributeValue.on.S = changeMode(mode.Tag);
 
-mode.SingleQuoteAttributeValue = new Mode();
 mode.SingleQuoteAttributeValue.on.DATA_CHAR = defaultHandler.DATA_CHAR;
 mode.SingleQuoteAttributeValue.on.NAMED_CHAR_REF = defaultHandler.NAMED_CHAR_REF;
 mode.SingleQuoteAttributeValue.on.NUMERIC_CHAR_REF = defaultHandler.NUMERIC_CHAR_REF;
-mode.SingleQuoteAttributeValue.on.SINGLE_QUOTE = function(m, tb) { return mode.Tag; };
+mode.SingleQuoteAttributeValue.on.SINGLE_QUOTE = changeMode(mode.Tag);
 
-mode.DoubleQuoteAttributeValue = new Mode();
 mode.DoubleQuoteAttributeValue.on.DATA_CHAR = defaultHandler.DATA_CHAR;
 mode.DoubleQuoteAttributeValue.on.NAMED_CHAR_REF = defaultHandler.NAMED_CHAR_REF;
 mode.DoubleQuoteAttributeValue.on.NUMERIC_CHAR_REF = defaultHandler.NUMERIC_CHAR_REF;
-mode.DoubleQuoteAttributeValue.on.DOUBLE_QUOTE = function(m, tb) { return mode.Tag; };
+mode.DoubleQuoteAttributeValue.on.DOUBLE_QUOTE = changeMode(mode.Tag);
 
-mode.CData = new Mode();
 mode.CData.on.DATA_CHAR = defaultHandler.DATA_CHAR;
-mode.CData.on.CDATA_CLOSE = function(m, tb) { return mode.Main; };
+mode.CData.on.CDATA_CLOSE = changeMode(mode.Main);
 
-mode.Doctype = new Mode();
 mode.Doctype.on.DECL_CHAR = doNothing;
 mode.Doctype.on.LITERAL = doNothing;
-mode.Doctype.on.SUBSET_OPEN = function (m, tb) { return mode.Subset; };
-mode.Doctype.on.START_TAG_CLOSE = function (m, tb) { return mode.Main; };
-mode.Doctype.on.EMPTY = function(m, tb) { return mode.Main; };
+mode.Doctype.on.SUBSET_OPEN = changeMode(mode.Subset);
+mode.Doctype.on.START_TAG_CLOSE = changeMode(mode.Main);
+mode.Doctype.on.EMPTY = changeMode(mode.Main);
 
-mode.Subset = new Mode();
 mode.Subset.on.PI = doNothing;
 mode.Subset.on.COMMENT = doNothing;
 mode.Subset.on.S = doNothing;
 mode.Subset.on.DECL = doNothing;
-mode.Subset.on.SUBSET_CLOSE = function (m, tb) { return mode.Main; };
-mode.Subset.on.EMPTY = function (m, tb) { return mode.Main; };
+mode.Subset.on.SUBSET_CLOSE = changeMode(mode.Main);
+mode.Subset.on.EMPTY = changeMode(mode.Main);
 
 var TreeBuilder = function () {
     this.openElements = [[null, null, []]];
@@ -286,7 +290,7 @@ TreeBuilder.prototype.emitEmptyElementTagClose = function () {
 };
 
 TreeBuilder.prototype.emitEndTag = function (name) {
-    var i, j;
+    var i;
     this.flushData();
     for (i = this.openElements.length - 1; i > 0; --i) {
 	if (this.openElements[i][0] === name) {
@@ -304,7 +308,7 @@ TreeBuilder.prototype.emitAttributeName = function (name) {
 };
 
 TreeBuilder.prototype.strip = function (content) {
-    var str = content[0]
+    var str = content[0];
     if (typeof(str) === "string") {
         str = str.replace(/^[ \f\r\t\n]*/, "");
         if (str === "")

@@ -30,25 +30,24 @@ Before the main part of the tokenization phase, the sequence of characters is pr
      
 ### Lexical tokens
 
-The tokenization phase works by dividing up the input into _lexical tokens_. Each lexical token has an associated regular grammar. Lexical tokens are named in UPPER_CASE. The following defines the possible lexical tokens and their grammars using the same notation as the MicroXML spec.
+The tokenization phase works by dividing up the input into _lexical tokens_. Lexical tokens are named in UPPER_CASE. Each lexical token has an associated regular grammar, and may also have a trailing context (lookahead) also specified by a regular grammar. The following defines the possible lexical tokens and their grammars using the same notation as the MicroXML spec. The trailing context is specified using a `/` operator: `X / Y` matches `X` but only when it is followed by `Y`.
 
-Each lexical token may have associated data which is a sequence of one or more strings, each of which is a substring of the token. The production for each lexical tokens that has associated data is prefixed by a number in parentheses indicating the number of substrings of associated data, and parentheses on the right-hand side (possibly within referenced productions) identify the substrings.
+A lexical token whose production below is prefixed by a `*` has associated data, which is a substring of the token. Parentheses on the right hand side (possibly within referenced productions) identify the substring (parentheses in the trailing context are ignored for this purpose).
 
     CHAR ::= [#x0-#x10FFFF]
-    (1) DATA_CHAR ::= (CHAR)
-    (1) SIMPLE_START_TAG ::= START_TAG_OPEN S* START_TAG_CLOSE
-    (1) SIMPLE_EMPTY_ELEMENT_TAG ::= START_TAG_OPEN S* EMPTY_ELEMENT_TAG_CLOSE
-    (2) START_TAG_ATTRIBUTE ::= START_TAG_OPEN S+ ATTRIBUTE_NAME_EQUALS
+    *DATA_CHAR ::= (CHAR)
+    *START_TAG_OPEN ::= "<" (NAME) / TAG_CONTEXT
+    *ATTRIBUTE_NAME_EQUALS ::= S* (NAME) S* "="
+    *BOOLEAN_ATTRIBUTE = S* (NAME) / TAG_CONTEXT
     START_TAG_CLOSE ::= ">"
     EMPTY_ELEMENT_TAG_CLOSE ::= "/>"
-    (1) END_TAG ::= "</" (NAME) S* ">"
-    (1) START_TAG_OPEN ::= "<" (NAME)
-    (1) ATTRIBUTE_NAME_EQUALS ::= S* (NAME) S* "="
+    *END_TAG ::= "</" (NAME) S* ">"
+    TAG_CONTEXT = (S+ NAME)* S* (START_TAG_CLOSE | EMPTY_ELEMENT_TAG_CLOSE | S NAME S* "=")
     NAME ::= NAME_START_CHAR NAME_CHAR*
     NAME_START_CHAR ::= [A-Za-z_:$] | [#x80-#x10FFFF]
     NAME_CHAR ::= NAME_START_CHAR | [0-9] | "-" | "."
-    (1) NAMED_CHAR_REF ::= "&" (NAME) ";"
-    (1) NUMERIC_CHAR_REF ::= "&#" ("x" [0-9a-fA-F]+ | [0-9]+) ";"
+    *NAMED_CHAR_REF ::= "&" (NAME) ";"
+    *NUMERIC_CHAR_REF ::= "&#" ("x" [0-9a-fA-F]+ | [0-9]+) ";"
     S ::= #x9 | #xA | #xC | #x20
     SINGLE_QUOTE ::= "'"
     DOUBLE_QUOTE ::= '"'
@@ -75,7 +74,7 @@ The state of the tokenization process consists of
 + the current input (a sequence of code-points)
 
 A step in the tokenization process consists of the following.
-+ Recognizing the next lexical token. This consists of finding the longest initial subsequence of the input that matches one of the lexical tokens recognized in the current tokenization mode. It is possible for there to be two choices for the longest matching token (eg S and DATA_CHAR in UnquoteAttributeValue mode): in this case, the choice that is not DATA_CHAR must be recognized.
++ Recognizing the next lexical token. This consists of finding the longest initial subsequence of the input that matches one of the lexical tokens recognized in the current tokenization mode. Any trailing context is not considered as part of the match. It is possible for there to be two choices for the longest matching token (eg S and DATA_CHAR in UnquoteAttributeValue mode): in this case, the choice that is not DATA_CHAR must be recognized.
 + Emitting zero or more abstract tokens according to the rules for that lexical token in that tokenization mode.
 + Possibly changing to another tokenization mode according to the rules for that lexical token in that tokenization mode.
 + Changing the current input to be the sequence of characters following the token.
@@ -102,9 +101,7 @@ The data associated with a lexical token is also by default associated with any 
 #### Main
 
 + DATA_CHAR, NAMED_CHAR_REF, NUMERIC_CHAR_REF - default handling
-+ SIMPLE_START_TAG - emit a StartTagOpen token followed by a StartTagClose token
-+ SIMPLE_EMPTY_ELEMENT_TAG - emit a StartTagOpen token followed by a EmptyElementTagClose token
-+ START_TAG_ATTRIBUTE - emit a StartTagOpen token followed by an AttributeName token and change to StartAttributeValue mode; the associated data for the StartTagOpen abstract token is the first of the strings associated with the lexical token; the associated data for the AttributeName is the second.
++ START_TAG_OPEN - emit a StartTagOpen token and change to Tag mode
 + END_TAG - emit an EndTag token
 + CDATA_OPEN - change to CData mode
 + COMMENT, PI - do nothing
@@ -112,7 +109,8 @@ The data associated with a lexical token is also by default associated with any 
 
 #### Tag
 
-+ ATTRIBUTE_NAME_EQUALS - emit a AttributeName token and change to StartAttributeValue mode
++ ATTRIBUTE_NAME_EQUALS - emit an AttributeName token and change to StartAttributeValue mode
++ BOOLEAN_ATTRIBUTE - emit an AttributeName token
 + EMPTY - emit a StartTagClose and change to Main mode
 + START_TAG_CLOSE, EMPTY_ELEMENT_TAG_CLOSE - default handling
 + S - do nothing
@@ -195,8 +193,6 @@ If at this point we do not have a single element, wrap everything in an element 
 ## TODO
 
 Define an HTML-specific tree builder.
-
-Maybe handle HTML-style boolean attributes.
 
 Should there be a CharRef abstract token so that whitespace stripping can take into account whether a character came from a reference or not?
 

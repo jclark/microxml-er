@@ -528,7 +528,8 @@
     },
     {
 	"id": "0105",
-	"source": "<doc>&#x110000;</doc>"
+	"source": "<doc>&#x110000;</doc>",
+        "recover": ["doc", {}, ["&#x110000;"]]
     },
     {
 	"id": "0106",
@@ -669,5 +670,30 @@
         "id": "decimalcharref2",
         "source": "<doc>&#060;</doc>",
         "recover": ["doc", {}, "<"]
+    },
+    {
+        "id": "boolatt1",
+        "source": "<doc att/>",
+        "recover": ["doc", {"att":""}, []]
+    },
+    {
+        "id": "boolatt2",
+        "source": "<doc att1 att2 att3 />",
+        "recover": ["doc", {"att1":"", "att2":"", "att3": ""}, []]
+    },
+    {
+        "id": "boolatt3",
+        "source": "<doc><e att1 att2 att3 </doc>",
+        "recover": ["doc", {}, ["<e att1 att2 att3 "]]
+    },
+    {
+        "id": "boolatt4",
+        "source": "<doc><e att1 att2 att3=></doc>",
+        "recover": ["doc", {}, [["e", {"att1":"", "att2":"", "att3": ""},[]]]]
+    },
+    {
+        "id": "boolatt5",
+        "source": "<doc att=\"val\"att2></doc>",
+        "recover": ["doc", {"att":"val", "att2":""},[]]
     }
  ]
