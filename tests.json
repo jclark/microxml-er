@@ -462,9 +462,9 @@
 	"recover": ["doc",{},["\u0080"]]
     },
     {
-	"id": "0092",
+	"id": "attvalquote1",
 	"source": "<doc att='val>Forgot the closing quote</doc>",
-	"recover": ["doc",{"att": "val>Forgot the closing quote</doc>"},[]]
+	"recover": ["doc",{"att": "val"}, ["Forgot the closing quote"]]
     },
     {
 	"id": "0093",
@@ -695,5 +695,20 @@
         "id": "boolatt5",
         "source": "<doc att=\"val\"att2></doc>",
         "recover": ["doc", {"att":"val", "att2":""},[]]
+    },
+    {
+        "id": "attvalquote2",
+        "source": "<doc att1='1<2' att2=\"val2\"></doc>",
+        "recover": ["doc",{"att1": "1<2", "att2":"val2"}, []]
+    },
+    {
+        "id": "attvalquote3",
+        "source": "<doc att1=\"1<2\"/>",
+        "recover": ["doc",{"att1": "1<2"}, []]
+    },
+    {
+        "id": "attvalquote4",
+        "source": "<doc att=\"val>Forgot the closing quote<e att2=\"stuff\"/></doc>",
+        "recover": ["doc",{"att": "val"}, ["Forgot the closing quote", ["e", {"att2":"stuff"},[]]]]
     }
  ]

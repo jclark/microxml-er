@@ -51,6 +51,9 @@ A lexical token whose production below is prefixed by a `*` has associated data,
     S ::= #x9 | #xA | #xC | #x20
     SINGLE_QUOTE ::= "'"
     DOUBLE_QUOTE ::= '"'
+    *ATTRIBUTE_VALUE_CHAR ::= (CHAR - [<>])
+    *ANGLE_SINGLE ::= ([<>]) / (CHAR - "'")* "'" (S | ">" | "/>")
+    *ANGLE_DOUBLE ::= ([<>]) / (CHAR - "'")* "'" (S | ">" | "/>")
     PI ::= "<?" (CHAR* - (CHAR* "?>" CHAR*)) "?>"
     COMMENT ::= "<!--" (CHAR* - (CHAR* "-->" CHAR*)) "-->"
     CDATA_OPEN ::= "<![CDATA["
@@ -74,7 +77,7 @@ The state of the tokenization process consists of
 + the current input (a sequence of code-points)
 
 A step in the tokenization process consists of the following.
-+ Recognizing the next lexical token. This consists of finding the longest initial subsequence of the input that matches one of the lexical tokens recognized in the current tokenization mode. Any trailing context is not considered as part of the match. It is possible for there to be two choices for the longest matching token (eg S and DATA_CHAR in UnquoteAttributeValue mode): in this case, the choice that is not DATA_CHAR must be recognized.
++ Recognizing the next lexical token. This consists of finding the longest initial subsequence of the input that matches one of the lexical tokens recognized in the current tokenization mode. Any trailing context is not considered as part of the match. It is possible for there to be two choices for the longest matching token (eg S and DATA_CHAR in UnquoteAttributeValue mode): in this case, the choice that is neither DATA_CHAR nor ATTRIBUTE_VALUE_CHAR must be recognized.
 + Emitting zero or more abstract tokens according to the rules for that lexical token in that tokenization mode.
 + Possibly changing to another tokenization mode according to the rules for that lexical token in that tokenization mode.
 + Changing the current input to be the sequence of characters following the token.
@@ -86,6 +89,7 @@ The tokenization process starts with Main as the current tokenization mode, and 
 This section defines default handling rules for certain lexical tokens, which are used in the definition of various tokenization modes.
 
 + DATA_CHAR - emit a DataChar token
++ ATTRIBUTE_VALUE_CHAR - emit a DataChar token
 + NAMED_CHAR_REF - if the associated string is a valid character name emit a single DataChar, otherwise emit a DataChar for each character in the NAMED_CHAR_REF 
 + NUMERIC_CHAR_REF - if the string starts with "x", then let _n_ be the result of treating the part of the string following the "x" as a hexadecimal number, otherwise let _n_ be the result of treating the string as a decimal number; if _n_ is <= #x10FFFF emit a single DataChar whose associated data is a string containing a character with code-point _n_, otherwise emit a DataChar for each character in the NUMERIC_CHAR_REF (ie for `&#` followed by the associated string followed by `;`)
 + DECIMAL_CHAR_REF
@@ -130,13 +134,15 @@ The data associated with a lexical token is also by default associated with any 
 
 #### SingleQuoteAttributeValue
 
-+ DATA_CHAR, NAMED_CHAR_REF, NUMERIC_CHAR_REF - default handling
-+ SINGLE_QUOTE - change to Tag mode
++ ATTRIBUTE_VALUE_CHAR, NAMED_CHAR_REF, NUMERIC_CHAR_REF - default handling
++ ANGLE_SINGLE - emit a DataChar token
++ SINGLE_QUOTE, EMPTY - change to Tag mode
 
 #### DoubleQuoteAttributeValue
 
-+ DATA_CHAR, NAMED_CHAR_REF, NUMERIC_CHAR_REF - default handling
-+ DOUBLE_QUOTE - change to Tag mode
++ ATTRIBUTE_VALUE_CHAR, NAMED_CHAR_REF, NUMERIC_CHAR_REF - default handling
++ ANGLE_DOUBLE - emit a DataChar token
++ DOUBLE_QUOTE, EMPTY - change to Tag mode
 
 #### CData
 
@@ -197,5 +203,3 @@ Define an HTML-specific tree builder.
 Should there be a CharRef abstract token so that whitespace stripping can take into account whether a character came from a reference or not?
 
 Allow use of HTML5 character names.
-
-Handle unclosed attribute values better.

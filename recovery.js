@@ -35,6 +35,10 @@ re.DECL_CHAR = "[^\\][<>\"']";
 re.DECL = "<!(:?" + re.DECL_CHAR + "|" + re.LITERAL + ")*>";
 re.SUBSET_CLOSE = "\\]" + re.S + "*>";
 re.SUBSET_OPEN = "\\[";
+re.ATTRIBUTE_VALUE_CHAR = "([^<>])";
+re.ANGLE_SINGLE = "([<>])(?=[^']*'(?:" + re.S + "|>|/>))";
+re.ANGLE_DOUBLE = "([<>])(?=[^\"]*\"(?:" + re.S + "|>|/>))";
+
 
 (function () {
     for (var name in re)
@@ -132,7 +136,8 @@ Mode.prototype.step = function(tokenizer) {
             if (match !== null
                 && (bestMatch === null
                     || match[0].length > bestMatch[0].length
-                    || (bestMatchName === "DATA_CHAR" && match[0].length === bestMatch[0].length))) {
+                    || ((bestMatchName === "DATA_CHAR" || bestMatchName === "ATTRIBUTE_VALUE_CHAR")
+                        && match[0].length === bestMatch[0].length))) {
                 bestMatch = match;
                 bestMatchName = name;
             }
@@ -201,12 +206,16 @@ mode.UnquoteAttributeValue.on.START_TAG_CLOSE = defaultHandler.START_TAG_CLOSE;
 mode.UnquoteAttributeValue.on.EMPTY_ELEMENT_TAG_CLOSE = defaultHandler.EMPTY_ELEMENT_TAG_CLOSE;
 mode.UnquoteAttributeValue.on.S = changeMode(mode.Tag);
 
-mode.SingleQuoteAttributeValue.on.DATA_CHAR = defaultHandler.DATA_CHAR;
+mode.SingleQuoteAttributeValue.on.ATTRIBUTE_VALUE_CHAR = defaultHandler.DATA_CHAR;
+mode.SingleQuoteAttributeValue.on.ANGLE_SINGLE = defaultHandler.DATA_CHAR;
+mode.SingleQuoteAttributeValue.on.EMPTY = changeMode(mode.Tag);
 mode.SingleQuoteAttributeValue.on.NAMED_CHAR_REF = defaultHandler.NAMED_CHAR_REF;
 mode.SingleQuoteAttributeValue.on.NUMERIC_CHAR_REF = defaultHandler.NUMERIC_CHAR_REF;
 mode.SingleQuoteAttributeValue.on.SINGLE_QUOTE = changeMode(mode.Tag);
 
-mode.DoubleQuoteAttributeValue.on.DATA_CHAR = defaultHandler.DATA_CHAR;
+mode.DoubleQuoteAttributeValue.on.ATTRIBUTE_VALUE_CHAR = defaultHandler.DATA_CHAR;
+mode.DoubleQuoteAttributeValue.on.ANGLE_DOUBLE = defaultHandler.DATA_CHAR;
+mode.DoubleQuoteAttributeValue.on.EMPTY = changeMode(mode.Tag);
 mode.DoubleQuoteAttributeValue.on.NAMED_CHAR_REF = defaultHandler.NAMED_CHAR_REF;
 mode.DoubleQuoteAttributeValue.on.NUMERIC_CHAR_REF = defaultHandler.NUMERIC_CHAR_REF;
 mode.DoubleQuoteAttributeValue.on.DOUBLE_QUOTE = changeMode(mode.Tag);
